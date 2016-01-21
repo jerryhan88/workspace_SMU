@@ -11,6 +11,9 @@ driver_prev_lacation_time = {}
 BREAK_LIMIT = 60 * 60 * 12 # To consider long time break such as shift or logoff
 #
 def run():
+    if os.path.exists(dt_dir):
+        shutil.rmtree(dt_dir)
+    os.makedirs(dt_dir)
     cvs_files = [fn for fn in os.listdir(tm_dir) if fn.endswith('.csv')]
     # generate terminal polygones
     term_polys = []
@@ -26,10 +29,7 @@ def run():
             _long, _lat = location.split(' ')
             points.append([eval(_long), eval(_lat)]) 
         term_polys.append(terminal_poly(tn, points))
-    #
-    if os.path.exists(dt_dir):
-        shutil.rmtree(dt_dir)
-        os.makedirs(dt_dir)
+    
     for fn in sorted(cvs_files):
         print 'start', fn
         with open('%s/%s' % (tm_dir, fn), 'rb') as csvfile:
