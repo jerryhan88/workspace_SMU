@@ -2,9 +2,10 @@ from __future__ import division
 #
 import os, shutil, csv
 #
-from shapely.geometry import Polygon, Point
+from _setting import tm_dir, dt_dir, ap_poly_info
 #
-from _setting import tm_dir, dt_dir, ap_poly_info 
+from shapely.geometry import Polygon, Point
+ 
 
 driver_prev_lacation_time = {}
 BREAK_LIMIT = 60 * 60 * 12 # To consider long time break such as shift or logoff
