@@ -8,6 +8,8 @@ if plf.startswith('Linux'):
     # This would be the server
     prefix = '/home/ckhan/taxi'
     sys.path.append('/home/ckhan/local/lib64/python2.7/site-packages')
+    for x in sys.path:
+        print x
 elif plf.startswith('Darwin'):
     # This is my Macbook Pro
     prefix = '/Users/JerryHan88/taxi'
