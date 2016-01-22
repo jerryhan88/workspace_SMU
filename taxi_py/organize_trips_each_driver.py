@@ -2,12 +2,11 @@ from __future__ import division
 #
 import os, shutil, csv
 #
-from _setting import tm_dir, dt_dir, ap_poly_info
+from _setting import tm_dir, dt_dir
+from location_check import check_terminal_num
 #
-from shapely.geometry import Polygon, Point
- 
 
-driver_prev_lacation_time = {}
+driver_prev_lacation_time = {} 
 BREAK_LIMIT = 60 * 60 * 12 # To consider long time break such as shift or logoff
 #
 def run():
@@ -15,20 +14,6 @@ def run():
         shutil.rmtree(dt_dir)
     os.makedirs(dt_dir)
     cvs_files = [fn for fn in os.listdir(tm_dir) if fn.endswith('.csv')]
-    # generate terminal polygones
-    term_polys = []
-    with open(ap_poly_info, 'r') as f:
-        ls = [w.strip() for w in f.readlines()]
-    for l in ls:
-        t, p = l.split('=')
-        if t == 'Airport':
-            continue
-        tn = eval(t.split('-')[1])
-        points = []
-        for location in p[len('POLYGON(('):-len('))')].split(','):
-            _long, _lat = location.split(' ')
-            points.append([eval(_long), eval(_lat)]) 
-        term_polys.append(terminal_poly(tn, points))
     
     for fn in sorted(cvs_files):
         print 'start', fn
@@ -38,23 +23,13 @@ def run():
             index_did = headers.index('driver-id')
             for row in reader:
                 driver_id = row[index_did]
-                write_driver_trip(headers, driver_id, row, term_polys)
+                write_driver_trip(headers, driver_id, row)
         print 'end', fn
 
-def write_driver_trip(headers, driver_id, row, term_polys):
+def write_driver_trip(headers, driver_id, row):
     '''
     Also check where this trip is started and ended
     '''
-    def check_in_airport(_long, _lat):
-        p = Point(_long, _lat)
-        tn = -1
-        for poly in term_polys:
-            if p.within(poly):
-                tn = poly.tid
-                break
-        del p
-        return tn
-    
     index_s_time, index_e_time = headers.index('start-time'), headers.index('end-time')
     index_s_long, index_s_lat = headers.index('start-long'), headers.index('start-lat')
     index_e_long, index_e_lat = headers.index('end-long'), headers.index('end-lat')   
@@ -68,7 +43,7 @@ def write_driver_trip(headers, driver_id, row, term_polys):
     #
     s_long, s_lat = eval(row[index_s_long]), eval(row[index_s_lat])
     e_long, e_lat = eval(row[index_e_long]), eval(row[index_e_lat])
-    c_s_ter, c_e_ter = check_in_airport(s_long, s_lat), check_in_airport(e_long, e_lat)
+    c_s_ter, c_e_ter = check_terminal_num(s_long, s_lat), check_terminal_num(e_long, e_lat)
     '''
     Set a trip mode
     Trips for servicing passengers are classified according to positions 
@@ -83,7 +58,6 @@ def write_driver_trip(headers, driver_id, row, term_polys):
         - previous trip occured 12 hours before    -> -1
     '''
     if not driver_prev_lacation_time.has_key(driver_id):
-        driver_prev_lacation_time[driver_id] = (c_e_ter, eval(row[index_e_time])) 
         trip_mode = -1
     else:
         p_e_ter, p_e_time = driver_prev_lacation_time[driver_id]
@@ -100,18 +74,11 @@ def write_driver_trip(headers, driver_id, row, term_polys):
             trip_mode = 3
         else:
             assert False
-    new_row = row + [check_in_airport(s_long, s_lat), check_in_airport(e_long, e_lat), trip_mode]
+    driver_prev_lacation_time[driver_id] = (c_e_ter, eval(row[index_e_time]))
+    new_row = row + [check_terminal_num(s_long, s_lat), check_terminal_num(e_long, e_lat), trip_mode]
     with open(fn, 'a') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(new_row)
-
-class terminal_poly(Polygon):
-    def __init__(self, tid, points):
-        Polygon.__init__(self, points)
-        self.tid = tid
-    def __repr__(self):
-        return self.tid
-        
 
 if __name__ == '__main__':
     run()
