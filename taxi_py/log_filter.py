@@ -29,12 +29,11 @@ def run():
             fn = 'logs-%s%s-normal.csv' % (yd[-2:], md)
             pt_log_csv = '%s/%s/%s' % (md_path, 'logs', fn)
             #
-            print 'handlie the file; %s' % pt_log_csv
-            logging_msg('handlie the file; %s' % pt_log_csv)
+            print 'handle the file; %s' % pt_log_csv
+            logging_msg('handle the file; %s' % pt_log_csv)
             with open(pt_log_csv, 'rb') as csvfile:
                 reader = csv.reader(csvfile)
                 headers = reader.next()
-                print headers
                 index_did = headers.index('driver-id')
                 for row in reader:        
                     driver_id = row[index_did]
