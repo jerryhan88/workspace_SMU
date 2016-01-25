@@ -9,8 +9,12 @@ def run():
     if os.path.exists(ds_dir):
         shutil.rmtree(ds_dir)
     os.makedirs(ds_dir)
-    ori_sdir_path = '%s/%s'%(path_to_ori_data, 'shift')
+    ori_sdir_path = '%s/%s' % (path_to_ori_data, 'shift')
     for fn in os.listdir(ori_sdir_path):
+        _, yymm, _ = fn.split('-')
+        if not(yymm.startswith('09') or yymm.startswith('10')):
+            continue  
+        
         pt_log_csv = '%s/%s' % (ori_sdir_path, fn)
         #
         print 'handle the file; %s' % pt_log_csv
