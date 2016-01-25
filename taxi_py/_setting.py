@@ -23,3 +23,4 @@ assert prefix
 tm_dir = prefix+'/trips_merged'
 dt_dir = prefix+'/drivers_trips'
 dl_dir = prefix+'/drivers_logs'
+ds_dir = prefix+'/drivers_shifts'
