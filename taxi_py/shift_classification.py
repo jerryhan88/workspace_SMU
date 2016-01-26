@@ -10,6 +10,7 @@ def run():
 #         shutil.rmtree(ds_dir)
 #     os.makedirs(ds_dir)
     ori_sdir_path = '%s/%s' % (path_to_ori_data, 'shift')
+    print ori_sdir_path
     for fn in os.listdir(ori_sdir_path):
         _, yymm = fn.split('-')
         print fn
