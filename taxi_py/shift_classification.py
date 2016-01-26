@@ -12,6 +12,7 @@ def run():
     ori_sdir_path = '%s/%s' % (path_to_ori_data, 'shift')
     for fn in os.listdir(ori_sdir_path):
         _, yymm = fn.split('-')
+        print fn
         if yymm != '1011':
             continue
 #         if not (yymm.startswith('09') or yymm.startswith('10')):
