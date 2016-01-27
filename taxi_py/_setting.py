@@ -14,7 +14,7 @@ if plf.startswith('Linux'):
 elif plf.startswith('Darwin'):
     # This is my Macbook Pro
     prefix = '/Users/JerryHan88/taxi'
-    path_to_ori_data = '.'
+    path_to_ori_data = '/Users/JerryHan88/taxi'
 else:
     #TODO
     assert False, 'Windows?'
@@ -24,3 +24,4 @@ tm_dir = prefix+'/trips_merged'
 dt_dir = prefix+'/drivers_trips'
 dl_dir = prefix+'/drivers_logs'
 ds_dir = prefix+'/drivers_shifts'
+l_dir = prefix+'/logs_ext'
