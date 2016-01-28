@@ -8,9 +8,12 @@ from _setting import prefix
 
 def run():
     pt_csv = '%s/%s' %(prefix, 'all_trips.csv')
-    trip_data = pd.read_csv(pt_csv)
+    df = pd.read_csv(pt_csv)
     
-    print list(trip_data.columns.values)
+    print list(df.columns.values)
+    
+    print df.loc[:, 'driver-id']
+    
     
     pass
 

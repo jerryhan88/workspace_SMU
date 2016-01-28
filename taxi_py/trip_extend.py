@@ -16,7 +16,7 @@ def run():
     init_multiprocessor()
     count_num_jobs = len(cvs_files)
     for fn in sorted(cvs_files):
-        pt_log_csv = '%s/%s/%s' % (tm_dir, 'logs', fn)
+        pt_log_csv = '%s/%s' % (tm_dir, fn)
         put_task(ext_trip_file, [pt_log_csv])
     end_multiprocessor(count_num_jobs)
 
