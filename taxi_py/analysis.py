@@ -1,16 +1,13 @@
 from __future__ import division
 #
+from _setting import t_dir
 import pandas as pd
 # import numpy as np
 # import matplotlib.pyplot as plt
 import os
 #
-from _setting import t_dir
 from multiprocess import init_multiprocessor, put_task, end_multiprocessor
 from logger import logging_msg
-
-import sys
-sys.path.append('/home/ckhan/local/lib64/python2.7/site-packages')
 
 def run():
     cvs_files = [fn for fn in os.listdir(t_dir) if fn.endswith('.csv')]
