@@ -7,8 +7,7 @@ from location_check import check_terminal_num
 from logger import logging_msg
 from multiprocess import init_multiprocessor, put_task, end_multiprocessor
 #
-import sys
-sys.path.append('/home/ckhan/local/lib64/python2.7/site-packages')
+
 def run():
     if os.path.exists(t_dir):
         shutil.rmtree(t_dir)
