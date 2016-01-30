@@ -8,7 +8,7 @@ import os
 #
 from multiprocess import init_multiprocessor, put_task, end_multiprocessor
 from logger import logging_msg
-
+#
 def run():
     cvs_files = [fn for fn in os.listdir(t_dir) if fn.endswith('.csv')]
     init_multiprocessor()
