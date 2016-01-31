@@ -107,5 +107,5 @@ def process_file(yymm):
     logging_msg('end the file; %s' % yymm)
 
 if __name__ == '__main__':
-#     run()
-    single_run()
+    run()
+#     single_run()
