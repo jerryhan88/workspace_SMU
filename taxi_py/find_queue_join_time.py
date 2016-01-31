@@ -47,7 +47,7 @@ def single_run():
     if os.path.exists(q_dir):
         shutil.rmtree(q_dir)
     os.makedirs(q_dir)
-    process_file('%02d%02d' % (9, 1))
+    process_file('%02d%02d' % (9, 2))
 
 def process_file(yymm):
     print 'handle the file; %s' % yymm
@@ -104,5 +104,5 @@ def process_file(yymm):
     logging_msg('end the file; %s' % yymm)
 
 if __name__ == '__main__':
-    run()
-#     single_run()
+#     run()
+    single_run()
