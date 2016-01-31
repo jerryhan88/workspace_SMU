@@ -4,8 +4,11 @@ from datetime import datetime
 from traceback import format_exc
 from logger import logging_msg
 from _setting import l_dir
+from multiprocess import init_multiprocessor, put_task, end_multiprocessor
 #
 def run():
+    init_multiprocessor()
+    count_num_jobs = 0
     for y in xrange(9, 11):
         for m in xrange(1, 13):
             try:
@@ -13,6 +16,8 @@ def run():
             except Exception as _:
                 logging_msg('Algorithm runtime exception (%02d%02d)\n' % (y, m) + format_exc())
                 raise
+            count_num_jobs += 1
+    end_multiprocessor(count_num_jobs)
 
 def process_file(yymm):
     print 'handle the file; %s' % yymm
