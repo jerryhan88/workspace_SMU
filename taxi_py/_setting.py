@@ -7,7 +7,9 @@ plf = platform.platform()
 if plf.startswith('Linux'):
     # This would be the server
     prefix = '/home/ckhan/taxi'
+    sys.path.append('/home/ckhan/local/lib/python2.7/site-packages')
     sys.path.append('/home/ckhan/local/lib64/python2.7/site-packages')
+    
 #     sys.path.append('/home/ckhan/local/lib/python2.6/site-packages')
     #
     path_to_ori_data = '/home/taxi'
