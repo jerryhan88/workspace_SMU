@@ -51,19 +51,6 @@ def single_run():
 def process_file(yymm):
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
-    #
-    yy, mm = int(yymm[:2]), int(yymm[2:])
-    if mm == 1:
-        if yy == 9:
-            prev_month = None
-        else:
-            prev_month = '0912'
-    else:
-        prev_month = '%02d%02d' % (yy, mm - 1)
-    #
-    pl_df = pd.read_csv('%s/logs-%s-normal.csv' % (l_dir, prev_month)) if prev_month else None        
-    cl_df = pd.read_csv('%s/logs-%s-normal.csv' % (l_dir, yymm))
-    t_df = pd.read_csv('%s/trips-%s.csv' % (t_dir, yymm))
     # labels of trips
     l_vid, l_st, l_tid, l_tm = 'vehicle-id', 'start-time', 'trip-id', 'trip-mode'
     # labels of logs
@@ -74,21 +61,36 @@ def process_file(yymm):
         writer = csv.writer(w_csvfile)
         header = ['trip-id', 'start-time', 'trip-mode', 'join-queue-time']
         writer.writerow(header)
+        processing_day = 1
+        if yymm =='0901':
+            pl_df = None
+        else:
+            yy, mm = int(yymm[:2]), int(yymm[2:])
+            pre_yymm = '%02d%02d' % (yy, mm - 1)
+            pt_prev_dir = '%s/%s' % (l_dir, pre_yymm)
+            last_day_csv = [fn for fn in os.listdir(pt_prev_dir) if fn.endswith('.csv')].pop()
+            pl_df = pd.read_csv('%s/%s' % (pt_prev_dir, last_day_csv))
+        cl_df = pd.read_csv('%s/%s/logs-%s%02d.csv' % (l_dir, yymm, yymm, processing_day))
         # only consider trips which depart from the airport
+        t_df = pd.read_csv('%s/trips-%s.csv' % (t_dir, yymm))
         da_df = t_df.loc[(t_df[l_tm] == 0) | (t_df[l_tm] == 1), l_tid]
         for _, tid in da_df.iteritems():
             target_trip = t_df.loc[(t_df[l_tid] == tid)].unstack()
             did = target_trip.get(l_vid).iloc[0]
             t_st = target_trip.get(l_st).iloc[0]  # unit sec.
             tm = target_trip.get(l_tm).iloc[0]
-            # 
+            #
+            dt_obj = datetime.fromtimestamp(t_st)
+            if processing_day < dt_obj.day:
+                processing_day +=1
+                pl_df = cl_df
+                cl_df = pd.read_csv('%s/%s/logs-%s%02d.csv' % (l_dir, yymm, yymm, processing_day))
             logs = cl_df[(cl_df[l_vid] == did) & (cl_df[l_lt] <= t_st) & (cl_df[l_ap] == 0)]
             the_last_logging_time_out_ap = logs[l_lt].max()
             join_queue_time = None
             if not the_last_logging_time_out_ap == float('nan'):
                 if not pl_df:
                     # This case is only for 0901 and the vehicle was located at the airport at first
-                    dt_obj = datetime.fromtimestamp(t_st)
                     join_queue_time = mktime(datetime(dt_obj.year, dt_obj.month, dt_obj.day).timetuple())
                 else:
                     # The last log would be in data in the previous month
@@ -101,5 +103,5 @@ def process_file(yymm):
     logging_msg('end the file; %s' % yymm)
 
 if __name__ == '__main__':
-    run()
-#     single_run()
+#     run()
+    single_run()
