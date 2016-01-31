@@ -12,7 +12,7 @@ def run():
     for y in xrange(9, 11):
         for m in xrange(1, 13):
             try:
-                process_file('%02d%02d' % (y, m))
+                put_task(process_file, ['%02d%02d' % (y, m)])
             except Exception as _:
                 logging_msg('Algorithm runtime exception (%02d%02d)\n' % (y, m) + format_exc())
                 raise
