@@ -42,12 +42,15 @@ def single_core_process_run():
                 logging_msg('Algorithm runtime exception (%02d%02d)\n' % (y, m) + format_exc())
                 raise
     
-    
 def single_run():
     if os.path.exists(q_dir):
         shutil.rmtree(q_dir)
     os.makedirs(q_dir)
-    process_file('%02d%02d' % (9, 2))
+    try:
+        process_file('%02d%02d' % (9, 2))
+    except Exception as _:
+        logging_msg('Algorithm runtime exception (%02d%02d)\n' % (9, 2) + format_exc())
+        raise
 
 def process_file(yymm):
     print 'handle the file; %s' % yymm
