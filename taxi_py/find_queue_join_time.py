@@ -93,7 +93,7 @@ def process_file(yymm):
             the_last_logging_time_out_ap = logs[l_lt].max()
             join_queue_time = None
             if not the_last_logging_time_out_ap == float('nan'):
-                if not pl_df:
+                if pl_df == None:
                     # This case is only for 0901 and the vehicle was located at the airport at first
                     join_queue_time = mktime(datetime(dt_obj.year, dt_obj.month, dt_obj.day).timetuple())
                 else:
