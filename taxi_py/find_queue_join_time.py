@@ -16,6 +16,19 @@ def run():
         shutil.rmtree(q_dir)
     os.makedirs(q_dir)
     #
+    for y in xrange(9, 11):
+        for m in xrange(1, 13):
+            try:
+                process_file('%02d%02d' % (y, m))
+            except Exception as _:
+                logging_msg('Algorithm runtime exception (%02d%02d)\n' % (y, m) + format_exc())
+                raise
+
+def multi_process_run():
+    if os.path.exists(q_dir):
+        shutil.rmtree(q_dir)
+    os.makedirs(q_dir)
+    #
     init_multiprocessor()
     count_num_jobs = 0
     for y in xrange(9, 11):
@@ -27,6 +40,13 @@ def run():
                 raise
             count_num_jobs += 1
     end_multiprocessor(count_num_jobs)
+    
+
+def single_run():
+    if os.path.exists(q_dir):
+        shutil.rmtree(q_dir)
+    os.makedirs(q_dir)
+    process_file('%02d%02d' % (9, 1))
 
 def process_file(yymm):
     print 'handle the file; %s' % yymm
@@ -82,3 +102,4 @@ def process_file(yymm):
 
 if __name__ == '__main__':
     run()
+#     single_run()

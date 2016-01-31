@@ -7,8 +7,13 @@ plf = platform.platform()
 if plf.startswith('Linux'):
     # This would be the server
     prefix = '/home/ckhan/taxi'
-    sys.path.append('/home/ckhan/local/lib/python2.7/site-packages')
-    sys.path.append('/home/ckhan/local/lib64/python2.7/site-packages')
+    py_vinfo = sys.version_info
+    if py_vinfo.major == 2 and py_vinfo.minor == 7:
+        sys.path.append('/home/ckhan/local/lib/python2.7/site-packages')
+        sys.path.append('/home/ckhan/local/lib64/python2.7/site-packages')
+    else:
+        print 'This python is not 2.7 version'
+        assert False
     
 #     sys.path.append('/home/ckhan/local/lib/python2.6/site-packages')
     #
