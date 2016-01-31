@@ -6,6 +6,7 @@ import pandas as pd
 from datetime import datetime
 from time import mktime
 import csv, os, shutil
+from traceback import format_exc
 #
 from logger import logging_msg
 from multiprocess import init_multiprocessor, put_task, end_multiprocessor
@@ -19,9 +20,14 @@ def run():
     count_num_jobs = 0
     for y in xrange(9, 11):
         for m in xrange(1, 13):
-            put_task(process_file, ['%02d%02d' % (y, m)])
+            try:
+                put_task(process_file, ['%02d%02d' % (y, m)])
+            except Exception as _:
+                logging_msg('Algorithm runtime exception (%02d%02d)\n' % (y, m) + format_exc())
+                raise
             count_num_jobs += 1
     end_multiprocessor(count_num_jobs)
+
 def process_file(yymm):
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
