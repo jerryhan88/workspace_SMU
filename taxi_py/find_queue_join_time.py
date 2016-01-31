@@ -66,11 +66,16 @@ def process_file(yymm):
         header = ['trip-id', 'start-time', 'trip-mode', 'join-queue-time']
         writer.writerow(header)
         processing_day = 1
-        if yymm =='0901':
+        if yymm == '0901':
             pl_df = None
         else:
             yy, mm = int(yymm[:2]), int(yymm[2:])
-            pre_yymm = '%02d%02d' % (yy, mm - 1)
+            prev_m = mm - 1
+            if prev_m == 0:
+                # 1001 month
+                pre_yymm = '%02d%02d' % (yy - 1, 12)
+            else:
+                pre_yymm = '%02d%02d' % (yy, mm - 1)
             pt_prev_dir = '%s/%s' % (l_dir, pre_yymm)
             last_day_csv = [fn for fn in os.listdir(pt_prev_dir) if fn.endswith('.csv')].pop()
             pl_df = pd.read_csv('%s/%s' % (pt_prev_dir, last_day_csv))
@@ -86,7 +91,7 @@ def process_file(yymm):
             #
             dt_obj = datetime.fromtimestamp(t_st)
             if processing_day < dt_obj.day:
-                processing_day +=1
+                processing_day += 1
                 pl_df = cl_df
                 cl_df = pd.read_csv('%s/%s/logs-%s%02d.csv' % (l_dir, yymm, yymm, processing_day))
             logs = cl_df[(cl_df[l_vid] == did) & (cl_df[l_lt] <= t_st) & (cl_df[l_ap] == 0)]
