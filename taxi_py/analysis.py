@@ -10,13 +10,22 @@ from multiprocess import init_multiprocessor, put_task, end_multiprocessor
 from logger import logging_msg
 #
 def run():
+    yymms = ['0905', '1003', '1005', '1007', '1010']
+    for yymm in yymms:
+        print 'handle the file; %s' % yymm
+        logging_msg('handle the file; %s' % yymm)
+        monthly_driver_income_trip_mode('trips-%s.csv' % (yymm))
+        print 'end the file; %s' % yymm
+        logging_msg('end the file; %s' % yymm)
+
+def multi_monthly_income():
     cvs_files = [fn for fn in os.listdir(t_dir) if fn.endswith('.csv')]
     init_multiprocessor()
     count_num_jobs = len(cvs_files)
     for fn in cvs_files:
         put_task(monthly_driver_income_trip_mode, [fn])
     end_multiprocessor(count_num_jobs)
-    
+
 def monthly_driver_income_trip_mode(fn):
     print 'handle the file; %s' % fn
     logging_msg('handle the file; %s' % fn)

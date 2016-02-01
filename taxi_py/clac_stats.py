@@ -18,15 +18,7 @@ def run():
 
 def calc_duration(s_df, did):
     whole_working_time, time_for_ap = None, None
-    
-    
-    
     return whole_working_time, time_for_ap
-    
-    
-    
-    
-    
 
 def whole_procedure(yymm):
     print 'handle the file; %s' % yymm
@@ -50,8 +42,6 @@ def whole_procedure(yymm):
     
     t_df.loc[(t_df[tm_l] == 3)].groupby(did_l).sum()[]
     t_df
-    
-
 
 #     s_df = pd.read_csv('%s/shift-%s.csv' % (s_dir, yymm))
 
@@ -83,13 +73,6 @@ def whole_procedure(yymm):
             s_df.loc[(s_df[did_l] == did, [duration_l])].sum
             
             #     print df.loc[(df['start-time'] <= 1232405340), ['fare', 'driver-id']]
-            
-            
-            assert False
-        
-        
-        
-        assert False
 #         new_header = ['']
 #         'trip-id'
 #         'driver-id'
@@ -103,7 +86,6 @@ def whole_procedure(yymm):
 #         
 #         
 #         start-time    end-time
-        
         
         id_s_time, id_e_time = headers.index('start-time'), headers.index('end-time')
         id_s_long, id_s_lat = headers.index('start-long'), headers.index('start-lat')

@@ -47,7 +47,7 @@ def single_run():
         shutil.rmtree(q_dir)
     os.makedirs(q_dir)
     try:
-        process_file('%02d%02d' % (9, 2))
+        process_file('%02d%02d' % (9, 1))
     except Exception as _:
         logging_msg('Algorithm runtime exception (%02d%02d)\n' % (9, 2) + format_exc())
         raise
@@ -112,5 +112,5 @@ def process_file(yymm):
     logging_msg('end the file; %s' % yymm)
 
 if __name__ == '__main__':
-    run()
-#     single_run()
+#     run()
+    single_run()
