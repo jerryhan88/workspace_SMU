@@ -41,16 +41,17 @@ def ext_log_file(pt_log_csv):
     with open(pt_log_csv, 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
+        id_time, id_vid, id_did = headers.index('time'), headers.index('vehicle-id'), headers.index('driver-id')
         index_long, index_lat = headers.index('longitude'), headers.index('latitude')
         pt_new_csv = '%s/%s' % (l_dir, pt_log_csv.split('/')[-1])
         with open(pt_new_csv, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile)
-            new_headers = headers + ['ap-or-not']
+            new_headers = ['time', 'vehicle-id', 'driver-id', 'ap-or-not']
             writer.writerow(new_headers)
             #
             for row in reader:        
                 ap_or_not = is_in_airport(eval(row[index_long]), eval(row[index_lat]))
-                new_row = row + [ap_or_not]
+                new_row = [row[id_time], row[id_vid], row[id_did], ap_or_not]
                 writer.writerow(new_row)
     print 'end the file; %s' % pt_log_csv
     logging_msg('end the file; %s' % pt_log_csv)

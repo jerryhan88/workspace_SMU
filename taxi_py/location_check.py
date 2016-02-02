@@ -44,10 +44,10 @@ def check_terminal_num(_long, _lat):
     
 def is_in_airport(_long, _lat):
     '''
-    if the location in airport's polygon, return 1
-    otherwise, return 0
+    if the location in airport's polygon, return O
+    otherwise, return X 
     '''
     p = Point(_long, _lat)
-    rv = 1 if p.within(ap_poly) else 0
+    rv = 'O' if p.within(ap_poly) else 'X'
     del p
     return rv
