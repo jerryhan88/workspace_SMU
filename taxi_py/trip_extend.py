@@ -60,20 +60,23 @@ def hand_each_trip(row, driver_prev_lacation, id_driver_id, id_s_time, id_e_time
     Also, one more mode is added to represent trip of which previous trip was handled more than 12 hours ago.
         - previous trip occured 12 hours before    -> -1
     '''
-    if not driver_prev_lacation.has_key(driver_id):
-        trip_mode = -1
+    if driver_prev_lacation.has_key(driver_id):
+        # ASSUMPTION
+        # If this trip is the driver's first trip in a month,
+        # let's assume that the previous trip occurred out of the airport
+        driver_prev_lacation[driver_id] = -1
+    #
+    p_e_ter = driver_prev_lacation[driver_id]
+    if p_e_ter != -1 and c_s_ter != -1 :
+        trip_mode = 0
+    elif p_e_ter != -1 and c_s_ter == -1:
+        trip_mode = 1
+    elif p_e_ter == -1 and c_s_ter != -1:
+        trip_mode = 2
+    elif p_e_ter == -1 and c_s_ter == -1:
+        trip_mode = 3
     else:
-        p_e_ter = driver_prev_lacation[driver_id]
-        if p_e_ter != -1 and c_s_ter != -1 :
-            trip_mode = 0
-        elif p_e_ter != -1 and c_s_ter == -1:
-            trip_mode = 1
-        elif p_e_ter == -1 and c_s_ter != -1:
-            trip_mode = 2
-        elif p_e_ter == -1 and c_s_ter == -1:
-            trip_mode = 3
-        else:
-            assert False
+        assert False
     driver_prev_lacation[driver_id] = c_e_ter
     return row + [check_terminal_num(s_long, s_lat), check_terminal_num(e_long, e_lat), trip_mode]
 
