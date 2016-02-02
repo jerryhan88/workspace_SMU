@@ -60,7 +60,7 @@ def hand_each_trip(row, driver_prev_lacation, id_driver_id, id_s_time, id_e_time
     Also, one more mode is added to represent trip of which previous trip was handled more than 12 hours ago.
         - previous trip occured 12 hours before    -> -1
     '''
-    if driver_prev_lacation.has_key(driver_id):
+    if not driver_prev_lacation.has_key(driver_id):
         # ASSUMPTION
         # If this trip is the driver's first trip in a month,
         # let's assume that the previous trip occurred out of the airport
