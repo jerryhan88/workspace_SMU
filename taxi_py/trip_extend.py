@@ -78,8 +78,10 @@ def ext_trip_file(pt_log_csv):
                     assert False
                 driver_prev_lacation[driver_id] = c_e_ter
                 #
-                new_row = [eval(row[id_trip_id]), eval(row[id_job_id]), eval(row[id_st]), eval(row[id_et]),
-                           eval(row[id_vid]), driver_id, eval(row[id_fare]), trip_mode]
+                tid, jid = row[id_trip_id], row[id_job_id],
+                st, et = eval(row[id_st]), eval(row[id_et]),
+                vid, fare = row[id_vid], eval(row[id_fare])
+                new_row = [tid, jid, st, et, vid, fare, driver_id, trip_mode]
                 writer.writerow(new_row)
 
 if __name__ == '__main__':
