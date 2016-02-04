@@ -12,6 +12,8 @@ def run():
     for y in xrange(9, 11):
         for m in xrange(1, 13):
             try:
+                if '%02d%02d' % (y, m) in ['0912', '1010']:
+                    continue
                 put_task(process_file, ['%02d%02d' % (y, m)])
             except Exception as _:
                 logging_msg('Algorithm runtime exception (%02d%02d)\n' % (y, m) + format_exc())
