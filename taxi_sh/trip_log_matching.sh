@@ -1,43 +1,90 @@
 #!/bin/bash
 
-prefix=$( ./check_os_and_set_prefix.sh )
+rv=$( ./check_os_and_set_prefix.sh )
+os_type=$(echo $rv | awk -F' ' '{print $1}')
+prefix=$(echo $rv | awk -F' ' '{print $2}')
 
-echo "${prefix}/logs_ext/0901"
-target_file="${prefix}/logs_ext/0901/logs-090101.csv"
-# cat $target_file 
+#yymm=$1 
+yymm=0902
 
-./logger.sh "processing $target_file" 
+trip_csv="${prefix}/trips_ext/trips-${yymm}.csv"
 
-while read -r line; do
-	a=$(echo $line | awk -F',' '{print $3}')
-	echo $a
-	if [ "$a" == X ]
-	then
-		echo XX
+./logger.sh "handling $trip_csv"
+
+logs_path="${prefix}/logs_ext/${yymm}"
+trip_log_temp="${logs_path}/trip_log_temp"
+#
+if [ -d $trip_log_temp ] ; then
+	rm -rf $trip_log_temp
+fi
+mkdir $trip_log_temp
+#
+if [ $yymm == 0901 ]; then
+	# The initial month for analysis
+	prev_yymm=' '
+elif [ $yymm == 1001 ]; then
+	# Can't use 0912 data which is corrupted
+	prev_yymm=' '
+elif [ $yymm == 1011 ]; then
+	# Can't use 1001 data which is corrupted
+	prev_yymm=' '
+else
+	yy=${yymm:0:2}
+	mm=${yymm:2:2}
+	prev_mm=`expr "$mm" - 1`
+	str_size=${#prev_mm}
+	if [ $str_size -eq 1 ]; then
+		prev_yymm="${yy}0${prev_mm}"
 	else
-		echo YY
+		prev_yymm="${yy}${prev_mm}"
 	fi
-	#a=$(date -d @1267619929 | awk -F' ' '{print $3}')
+fi
+#
+while read -r line; do
+	t_timestamp=$(echo $line | awk -F',' '{print $3}')
+	if [ $t_timestamp == start-time ]; then
+		# The header's case
+		continue
+	fi
 	
-	break
+	t_day=$(./get_day_from_timestamp.sh $os_type $t_timestamp)
 	
-	#if [ "$a" -gt 2 ]
-	#then
-		#	break  # Skip entire rest of loop.
-	#fi
+	str_size=${#t_day}
+	if [ $str_size -eq 1 ]
+	then
+		t_day="0${t_day}"
+	fi
+	
+	did=$(echo $line | awk -F',' '{print $7}')
+	echo $did
+	d_prev_log="${trip_log_temp}/${did}"
+	echo $d_prev_log 
+	if [ ! -f $d_prev_log ]; then
+		touch $d_prev_log
+		if [ ! $prev_yymm == ' ' ]; then
+			last_day_prev_month="${prefix}/logs_ext/${prev_yymm}"
+			prev_month_csv="${last_day_prev_month}/$(ls $last_day_prev_month | sort | tail -1)"
+			cat $prev_month_csv | grep $did | grep X > $d_prev_log 
+		fi 
+	else
+		# Check the last log's logging time, if it is less than t_day
+		# append t_day's a new csv log file (use >> command)
+		last_logging_time=$(echo $(tail -1 $d_prev_log) | awk -F',' '{print $1}')
+		last_logging_day=
+		echo hi
+		echo $last_logging_time
+		
+	 	# t_timestamp 	
+		
+		# And then use while loop
+		# find the last log before trip time
+		# and save other logs recorded after trip time to did_temp file
+		# and mv did_temp did
+	fi
 
-:'
-#echo -n "$a "
+done < $trip_csv
+	
+	
+rm -rf $trip_log_temp
 
- a=$(($a+1))
-
- if [ "$a" -eq 3 ] || [ "$a" -eq 11 ]  # Excludes 3 and 11.
- then
-   continue      # Skip rest of this particular loop iteration.
- fi
-
- echo -n "$a "   # This will not execute for 3 and 11.
-done 
-'
-
-done < $target_file
+exit 0
