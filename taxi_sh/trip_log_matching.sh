@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yymm=0902 
+yymm=$1
 
 rv=$( ./check_os_and_set_prefix.sh )
 os_type=$(echo $rv | awk -F' ' '{print $1}')
