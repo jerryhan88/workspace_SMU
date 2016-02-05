@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yymm=$1 
+yymm=0902 
 
 rv=$( ./check_os_and_set_prefix.sh )
 os_type=$(echo $rv | awk -F' ' '{print $1}')
@@ -79,7 +79,8 @@ while read -r trip_line; do
 		touch $d_prev_log
 		if [ ! $prev_yymm == ' ' ]; then
 			last_day_prev_month="${prefix}/logs_ext/${prev_yymm}"
-			prev_month_csv="${last_day_prev_month}/$(ls $last_day_prev_month | sort | tail -1)"
+			prev_month_csv="${last_day_prev_month}/$(ls $last_day_prev_month | grep .csv | sort | tail -1)"
+			echo prev_month_csv $prev_month_csv
 			cat $prev_month_csv | grep $did | grep X > $d_prev_log
 		fi 
 	else
@@ -88,6 +89,7 @@ while read -r trip_line; do
 		last_logging_time=$(echo $(tail -1 $d_prev_log) | awk -F',' '{print $1}')
 		if ! [[ $last_logging_time =~ $re ]] ; then
 			cur_day_csv="${prefix}/logs_ext/${yymm}/logs-${yymm}${t_day}.csv"
+			echo cur_day_csv $cur_day_csv
 			cat $cur_day_csv | grep $did | grep X >> $d_prev_log
 		else
 			last_logging_day=$(./get_day_from_timestamp.sh $os_type $last_logging_time)
@@ -95,6 +97,7 @@ while read -r trip_line; do
 			#
 			if [ $last_logging_day -lt $t_day ]; then
 				cur_day_csv="${prefix}/logs_ext/${yymm}/logs-${yymm}${t_day}.csv"
+				echo cur_day_csv $cur_day_csv
 				cat $cur_day_csv | grep $did | grep X >> $d_prev_log
 			fi	
 		fi
