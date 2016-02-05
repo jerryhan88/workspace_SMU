@@ -80,7 +80,6 @@ while read -r trip_line; do
 		if [ ! $prev_yymm == ' ' ]; then
 			last_day_prev_month="${prefix}/logs_ext/${prev_yymm}"
 			prev_month_csv="${last_day_prev_month}/$(ls $last_day_prev_month | grep .csv | sort | tail -1)"
-			echo prev_month_csv $prev_month_csv
 			cat $prev_month_csv | grep $did | grep X > $d_prev_log
 		fi 
 	else
