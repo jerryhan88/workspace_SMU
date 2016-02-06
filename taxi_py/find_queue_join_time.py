@@ -23,7 +23,7 @@ def multi_process_run():
     #
     init_multiprocessor()
     count_num_jobs = 0
-    for yymm in ['0907','0904','1001','1002']:
+    for yymm in ['0901','0902','1001','1002']:
         try:
             put_task(process_file, [yymm])
         except Exception as _:
