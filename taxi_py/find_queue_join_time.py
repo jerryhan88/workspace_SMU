@@ -119,6 +119,8 @@ def process_file(yymm):
                     # The last log would be in data in the previous month
                     logs = pl_df[(pl_df[l_did] == did) & (pl_df[l_lt] <= t_st) & (pl_df[l_ap] == 'X')]
                     join_queue_time = logs[l_lt].max()
+                    if join_queue_time == float('nan'):
+                        join_queue_time = mktime(datetime(dt_obj.year, dt_obj.month, dt_obj.day).timetuple())
             else:
                 join_queue_time = the_last_logging_time_out_ap
             writer.writerow([tid, t_st, t_et, did, fare, tm, join_queue_time])
