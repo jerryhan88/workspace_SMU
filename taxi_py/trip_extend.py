@@ -56,8 +56,6 @@ def ext_trip_file(pt_log_csv):
                     - drop off InAP - pick up OutAP            -> 1
                     - drop off OutAP - pick up InAP            -> 2
                     - drop off OutAP - pick up OutAP           -> 3
-                Also, one more mode is added to represent trip of which previous trip was handled more than 12 hours ago.
-                    - previous trip occured 12 hours before    -> -1
                 '''
                 if not driver_prev_lacation.has_key(driver_id):
                     # ASSUMPTION
