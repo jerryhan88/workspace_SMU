@@ -57,7 +57,7 @@ def single_run():
         shutil.rmtree(q_dir)
     os.makedirs(q_dir)
     try:
-        process_file('%02d%02d' % (9, 1))
+        process_file('%02d%02d' % (9, 7))
     except Exception as _:
         logging_msg('Algorithm runtime exception (%02d%02d)\n' % (9, 2) + format_exc())
         raise
@@ -81,7 +81,7 @@ def process_file(yymm):
         yy, mm = int(yymm[:2]), int(yymm[2:])
         pre_yymm = '%02d%02d' % (yy, mm - 1)
         pt_prev_dir = '%s/%s' % (l_dir, pre_yymm)
-        csvs= [fn for fn in os.listdir(pt_prev_dir) if fn.endswith('.csv')].sort()
+        csvs= sorted([fn for fn in os.listdir(pt_prev_dir) if fn.endswith('.csv')])
         last_day_csv = csvs.pop()
         pl_df = pd.read_csv('%s/%s' % (pt_prev_dir, last_day_csv))
     cl_df = pd.read_csv('%s/%s/logs-%s%02d.csv' % (l_dir, yymm, yymm, processing_day))
@@ -127,5 +127,5 @@ def process_file(yymm):
     logging_msg('end the file; %s' % yymm)
 
 if __name__ == '__main__':
-    run()
-#     single_run()
+#     run()
+    single_run()
