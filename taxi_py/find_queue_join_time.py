@@ -23,7 +23,7 @@ def multi_process_run():
     #
     init_multiprocessor()
     count_num_jobs = 0
-    for yymm in ['0901','0902','1001','1002']:
+    for yymm in ['0901', '0902', '0903', '0904', '1001', '1002', '1003', '1004']:
         try:
             put_task(process_file, [yymm])
         except Exception as _:
@@ -81,7 +81,7 @@ def process_file(yymm):
         yy, mm = int(yymm[:2]), int(yymm[2:])
         pre_yymm = '%02d%02d' % (yy, mm - 1)
         pt_prev_dir = '%s/%s' % (l_dir, pre_yymm)
-        csvs= sorted([fn for fn in os.listdir(pt_prev_dir) if fn.endswith('.csv')])
+        csvs = sorted([fn for fn in os.listdir(pt_prev_dir) if fn.endswith('.csv')])
         last_day_csv = csvs.pop()
         pl_df = pd.read_csv('%s/%s' % (pt_prev_dir, last_day_csv))
     cl_df = pd.read_csv('%s/%s/logs-%s%02d.csv' % (l_dir, yymm, yymm, processing_day))
@@ -112,13 +112,12 @@ def process_file(yymm):
             logs = cl_df[(cl_df[l_did] == did) & (cl_df[l_lt] <= t_st) & (cl_df[l_ap] == 'X')]
             the_last_logging_time_out_ap = logs[l_lt].max()
             join_queue_time = None
-            if not the_last_logging_time_out_ap == float('nan'):
+            if the_last_logging_time_out_ap == float('nan'):
                 if not isinstance(pl_df, pd.DataFrame):
-                    # This case is only for 0901 and the vehicle was located at the airport at first
                     join_queue_time = mktime(datetime(dt_obj.year, dt_obj.month, dt_obj.day).timetuple())
                 else:
                     # The last log would be in data in the previous month
-                    logs = pl_df[(pl_df[l_did] == did) & (pl_df[l_lt] <= t_st) & (pl_df[l_ap] == 0)]
+                    logs = pl_df[(pl_df[l_did] == did) & (pl_df[l_lt] <= t_st) & (pl_df[l_ap] == 'X')]
                     join_queue_time = logs[l_lt].max()
             else:
                 join_queue_time = the_last_logging_time_out_ap
