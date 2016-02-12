@@ -96,7 +96,10 @@ def process_file(yymm):
                     vid_trip = trip_row[id_vid_trip]
                     tid, t_et = trip_row[id_tid], trip_row[id_et]
                     did, fare = trip_row[id_did], trip_row[id_fare]
-                    join_queue_time = last_logging_time[vid_trip]  
+                    if not last_logging_time.has_key(vid_trip):
+                        join_queue_time = t_st
+                    else:
+                        join_queue_time = last_logging_time[vid_trip]  
                     writer.writerow([tid, t_st, t_et, did, fare, tm, join_queue_time])
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
