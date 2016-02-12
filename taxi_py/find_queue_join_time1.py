@@ -6,22 +6,27 @@ import os, shutil, csv
 from traceback import format_exc
 #
 from logger import logging_msg
+from multiprocess import init_multiprocessor, put_task, end_multiprocessor
 
 def run():
     if os.path.exists(q_dir):
         shutil.rmtree(q_dir)
     os.makedirs(q_dir)
-    
+    init_multiprocessor()
+    count_num_jobs = 0
     for y in xrange(9, 11):
         for m in xrange(1, 13):
             yymm = '%02d%02d' % (y, m)
             if yymm in ['0912', '1010']:
                 continue
             try:
-                process_file(yymm)
+#                 process_file(yymm)
+                put_task(process_file, [yymm])
             except Exception as _:
                 logging_msg('Algorithm runtime exception (%02d%02d)\n' % (y, m) + format_exc())
                 raise
+            count_num_jobs += 1
+    end_multiprocessor(count_num_jobs)
 
 def process_file(yymm):
     print 'handle the file; %s' % yymm
@@ -61,7 +66,7 @@ def process_file(yymm):
     pt_new_csv = '%s/queue-%s.csv' % (q_dir, yymm)
     with open(pt_new_csv, 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile)
-        header = [l_tid, l_st, l_et, l_did, l_tm, l_fare, 'join-queue-time']
+        header = [l_tid, l_st, l_et, l_did,l_fare, l_tm, 'join-queue-time']
         writer.writerow(header)
         with open('%s/trips-%s.csv' % (t_dir, yymm), 'rb') as trip_csvfile:
             trip_reader = csv.reader(trip_csvfile)
