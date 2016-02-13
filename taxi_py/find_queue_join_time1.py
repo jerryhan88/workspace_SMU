@@ -45,7 +45,7 @@ def process_file(yymm):
         prev_day_csv = None
     elif yymm == '1001':
         prev_day_csv = None
-    elif yymm == '1010':
+    elif yymm == '1011':
         prev_day_csv = None
     else:
         yy, mm = int(yymm[:2]), int(yymm[2:])
