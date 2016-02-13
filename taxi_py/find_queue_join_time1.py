@@ -9,6 +9,9 @@ from logger import logging_msg
 from multiprocess import init_multiprocessor, put_task, end_multiprocessor
 
 def run():
+    process_file('1011')
+
+def run1():
     if os.path.exists(q_dir):
         shutil.rmtree(q_dir)
     os.makedirs(q_dir)
@@ -64,6 +67,7 @@ def process_file(yymm):
                     last_logging_time[vid] = lt
     #
     pt_new_csv = '%s/queue-%s.csv' % (q_dir, yymm)
+    print yymm, pt_new_csv 
     with open(pt_new_csv, 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile)
         header = [l_tid, l_st, l_et, l_did,l_fare, l_tm, 'join-queue-time']
