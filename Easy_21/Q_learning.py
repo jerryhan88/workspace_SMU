@@ -6,7 +6,7 @@ from _setting import PLAYER_STATES, DEALER_STATES, RED, BLACK
 from _setting import WIN, DRAW, LOSE
 from _setting import ALPHA, GAMMA
 from _setting import CONVERGENCE_CONDITION 
-from card_handling import get_card 
+from _setting import get_card 
 
 def reinforce_learning():
     Qsa, Csa = {}, {}

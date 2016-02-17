@@ -1,19 +1,17 @@
 from __future__ import division
 #
-import os, csv
+import csv
+from random import random
 #
 from _setting import RED, BLACK
 from _setting import STICK, HIT
 from _setting import WIN, DRAW, LOSE
 from _setting import BUST
-from _setting import Q_LEARNING_DIR
-from card_handling import get_card
+from _setting import SUMMARY_FNAME
+from _setting import get_card, get_sum
 #
 Qsa = {}
-
-get_sum = lambda cards: sum([cn for cc, cn in cards if cc == BLACK]) - sum([cn for cc, cn in cards if cc == RED])
-
-DISPLAY= True
+DISPLAY= False
  
 def play_round(way_to_decision):
     # Initialize a game
@@ -48,8 +46,10 @@ def play_round(way_to_decision):
             if s < 1  or s > 21:
                 rv_player = BUST
                 break
+            if s == 21:
+                return WIN
         else:
-            assert player_choice == STICK
+            assert player_choice == STICK, player_choice 
             rv_player = STICK
             break
     #
@@ -67,6 +67,8 @@ def play_round(way_to_decision):
             elif s >= 17:
                 rv_dealer = STICK
                 break
+            if s == 21:
+                return LOSE
             else:
                 # HIT
                 nc = get_card()
@@ -97,36 +99,32 @@ def manual_decision(player_cards, dealer_cards):
 def q_learning_decision(player_cards, dealer_cards):
     if not Qsa:
         # read all files
-        cvs_files = [fn for fn in os.listdir(Q_LEARNING_DIR) if fn.endswith('.csv')]
-        results = []
-        for fn in cvs_files:
-            temp_Qsa = {}
-            with open('%s/%s'%(Q_LEARNING_DIR, fn), 'rb') as r_csvfile:
-                reader = csv.reader(r_csvfile)
-                for row in reader:
-                    s1, s2, a = row
-                    temp_Qsa[(s1, s2)] = a
-            results.append(temp_Qsa)
-        for k in results[0].iterkeys():
-            num_HIT, num_STICK = 0,0
-            for i in xrange(len(results)):
-                v = results[i][k]
-                if v == 'HIT':
-                    num_HIT +=1
-                else:
-                    assert v == 'STICK'
-                    num_STICK +=1
-            Qsa[k] = HIT if num_HIT >= num_STICK else STICK
-    else:
-        s1, s2 = get_sum(player_cards), get_sum(dealer_cards)
-        return Qsa[(s1, s2)]
+        with open(SUMMARY_FNAME, 'rb') as r_csvfile:
+            reader = csv.reader(r_csvfile)
+            for row in reader:
+                s1, s2, a = row
+                Qsa[(eval(s1),eval(s2))] = eval(a)
+    s1, s2 = get_sum(player_cards), get_sum(dealer_cards)
+    return Qsa[(s1, s2)]
+
+def random_decision(player_cards, dealer_cards):
+    return HIT if random() else STICK
+
+def play_single_game(way_to_decision):
+    rv = play_round(way_to_decision)
+    if rv == WIN:
+        print 'WIN!!!'
+    elif rv == LOSE:
+        print 'LOSE--;'
+    elif rv == DRAW:
+        print 'DRAW'    
     
 def play_game_many_time(way_to_decision, num_game):
     result = []
     for _ in xrange(num_game):
         rv = play_round(way_to_decision)
         result.append(rv)
-    print 'Wining rate is %.2f' % sum(rv for rv in result if rv == WIN) / len(result)
+    print 'Wining rate is %.2f' % (sum(rv for rv in result if rv == WIN) / len(result))
 
 def display_current(player_cards, dealer_cards):
     # about dealer
@@ -151,7 +149,39 @@ def display_current(player_cards, dealer_cards):
             player_current['Red'].append(cn)
     print 'Player: Black cards %s, Red cards %s, Sum %d' % (str(player_current['Black']), str(player_current['Red']), player_sum)
     print 'Dealer: Black cards %s, Red cards %s, Sum %d' % (str(dealer_current['Black']), str(dealer_current['Red']), dealer_sum)
+
+def run():
+    global DISPLAY
+    while True:
+        print 'Choose a way to play game'
+        choice_num = raw_input(" 1. Manual decision\n 2. Use Q-learning algorithm\n 3. Random decision\n")
+        if eval(choice_num) == 1:
+            way_to_decision = manual_decision
+            DISPLAY = True
+            break
+        elif eval(choice_num) == 2:
+            way_to_decision = q_learning_decision
+            break
+        elif eval(choice_num) == 3:
+            way_to_decision = random_decision
+            break
+        else:
+            print 'Choose again'
+    while True:
+        a_or_m = raw_input("Will you play a game (A) or multiple games (M), type A or M:\n")
+        if a_or_m =='A' or a_or_m =='M':
+            if a_or_m =='M':
+                num_games = eval(raw_input("How many times do you want play games:\n"))
+            break
+        else:
+            print 'Type again'
+    
+    if a_or_m =='A':
+        DISPLAY = True
+        play_single_game(way_to_decision)
+    else:
+        assert a_or_m =='M'
+        play_game_many_time(q_learning_decision, num_games)
     
 if __name__ == '__main__':
-#     print play_round(manual_decision)
-    play_game_many_time(q_learning_decision)
+    run()

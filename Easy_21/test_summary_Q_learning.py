@@ -1,9 +1,10 @@
 from __future__ import division
 #
-import os
+import os, csv
 from Q_learning import reinforce_learning
 from time import time
-from _setting import Q_LEARNING_DIR
+from _setting import Q_LEARNING_DIR, SUMMARY_FNAME
+from _setting import HIT, STICK
 from multiprocess import init_multiprocessor, put_task, end_multiprocessor
 
 def run():
@@ -28,6 +29,36 @@ def get_q_learning_result():
             tf.write('%s\n' % s)
     print time() - old_time
 
+def summary():
+    # read all files
+    cvs_files = [fn for fn in os.listdir(Q_LEARNING_DIR) if fn.endswith('.csv')]
+    results = []
+    for fn in cvs_files:
+        temp_Qsa = {}
+        with open('%s/%s' % (Q_LEARNING_DIR, fn), 'rb') as r_csvfile:
+            reader = csv.reader(r_csvfile)
+            for row in reader:
+                s1, s2, a = row
+                temp_Qsa[(s1, s2)] = a
+        results.append(temp_Qsa)
+        
+    with open(SUMMARY_FNAME, 'wt') as w_csvfile:
+        writer = csv.writer(w_csvfile)
+        temp_list = []
+        for k in results[0].iterkeys():
+            num_HIT, num_STICK = 0, 0
+            for i in xrange(len(results)):
+                v = results[i][k]
+                if v == 'HIT':
+                    num_HIT += 1
+                else:
+                    assert v == 'STICK'
+                    num_STICK += 1
+            temp_list.append([eval(k[0]), eval(k[1]), HIT if num_HIT >= num_STICK else STICK])
+        for r in sorted(temp_list):
+            writer.writerow(r)
+
 if __name__ == '__main__':
-    run()
+#     run()
+    summary()
     
