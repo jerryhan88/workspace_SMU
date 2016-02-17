@@ -20,6 +20,9 @@ def reinforce_learning():
             Csa[(s1, s2)] = False
     while True:
         s1, s2 = choice(PLAYER_STATES), choice(DEALER_STATES)
+        if Csa[(s1, s2)]:
+            # if the state are converged at once, q-value will not be updated any more for speedy convergence
+            continue
         for a in xrange(2):
             if a == 0:
                 # HIT
