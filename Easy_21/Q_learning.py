@@ -20,9 +20,9 @@ def reinforce_learning():
             Csa[(s1, s2)] = False
     while True:
         s1, s2 = choice(PLAYER_STATES), choice(DEALER_STATES)
-        if Csa[(s1, s2)]:
-            # if the state are converged at once, q-value will not be updated any more for speedy convergence
-            continue
+#         if Csa[(s1, s2)]:
+#             # if the state are converged at once, q-value will not be updated any more for speedy convergence
+#             continue
         for a in xrange(2):
             if a == 0:
                 # HIT
@@ -72,14 +72,19 @@ def reinforce_learning():
                 assert False
             Qsa[(s1, s2)][a] = (1 - ALPHA) * Qsa[(s1, s2)][a] + ALPHA * qrs
         # Check where the state is converged or not
-        if abs(Qsa[(s1, s2)][0] - Qsa[(s1, s2)][1]) > CONVERGENCE_CONDITION:
-            Csa[(s1, s2)] = True
-        # If all states are converged, end reinforce learning         
-        for v in Csa.itervalues():
-            if not v:
+#         if abs(Qsa[(s1, s2)][0] - Qsa[(s1, s2)][1]) > CONVERGENCE_CONDITION:
+#             Csa[(s1, s2)] = True
+        # If all states are converged, end reinforce learning
+        for k in Qsa.iterekeys():
+            if abs(Qsa[k][0] - Qsa[k][1]) > CONVERGENCE_CONDITION:
                 break
         else:
-            break 
+            break          
+#         for v in Csa.itervalues():
+#             if not v:
+#                 break
+#         else:
+#             break 
     return Qsa
     
 if __name__ == '__main__':
