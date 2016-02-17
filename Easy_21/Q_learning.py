@@ -75,8 +75,8 @@ def reinforce_learning():
 #         if abs(Qsa[(s1, s2)][0] - Qsa[(s1, s2)][1]) > CONVERGENCE_CONDITION:
 #             Csa[(s1, s2)] = True
         # If all states are converged, end reinforce learning
-        for k in Qsa.iterekeys():
-            if abs(Qsa[k][0] - Qsa[k][1]) > CONVERGENCE_CONDITION:
+        for k in Qsa.iterkeys():
+            if abs(Qsa[k][0] - Qsa[k][1]) < CONVERGENCE_CONDITION:
                 break
         else:
             break          
