@@ -88,7 +88,6 @@ while read -r trip_line; do
 		last_logging_time=$(echo $(tail -1 $d_prev_log) | awk -F',' '{print $1}')
 		if ! [[ $last_logging_time =~ $re ]] ; then
 			cur_day_csv="${prefix}/logs_ext/${yymm}/logs-${yymm}${t_day}.csv"
-			echo cur_day_csv $cur_day_csv
 			cat $cur_day_csv | grep $did | grep X >> $d_prev_log
 		else
 			last_logging_day=$(./get_day_from_timestamp.sh $os_type $last_logging_time)
@@ -96,11 +95,9 @@ while read -r trip_line; do
 			#
 			if [ $last_logging_day -lt $t_day ]; then
 				cur_day_csv="${prefix}/logs_ext/${yymm}/logs-${yymm}${t_day}.csv"
-				echo cur_day_csv $cur_day_csv
 				cat $cur_day_csv | grep $did | grep X >> $d_prev_log
 			fi	
 		fi
-		
 	fi
 	new_d_prev_log="${d_prev_log}_"
 	touch $new_d_prev_log 
