@@ -2,10 +2,10 @@ from __future__ import division
 #
 import os, shutil, csv
 #
-from _setting import path_to_ori_data, dl_dir, l_dir
-from location_check import is_in_airport
-from logger import logging_msg
-from multiprocess import init_multiprocessor, put_task, end_multiprocessor
+from support._setting import path_to_ori_data, dl_dir, l_dir
+from support.location_check import is_in_airport
+from support.logger import logging_msg
+from support.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 '''
 Only process logs from 2009~2010
 And this module only save log data when the location (in airport or not) changes

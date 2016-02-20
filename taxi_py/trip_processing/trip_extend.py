@@ -2,10 +2,10 @@ from __future__ import division
 #
 import os, shutil, csv
 #
-from _setting import tm_dir, t_dir
-from location_check import check_terminal_num
-from logger import logging_msg
-from multiprocess import init_multiprocessor, put_task, end_multiprocessor
+from support._setting import tm_dir, t_dir
+from support.location_check import check_terminal_num
+from support.logger import logging_msg
+from support.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 #
 
 def run():

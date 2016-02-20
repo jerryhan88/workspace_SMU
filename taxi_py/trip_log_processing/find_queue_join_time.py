@@ -1,12 +1,12 @@
 from __future__ import division
 #
-from _setting import l_dir, t_dir, q_dir
+from support._setting import l_dir, t_dir, q_dir
 #
 import os, shutil, csv
 from traceback import format_exc
 #
-from logger import logging_msg
-from multiprocess import init_multiprocessor, put_task, end_multiprocessor
+from support.logger import logging_msg
+from support.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 
 def run():
     process_file('1011')

@@ -2,9 +2,9 @@ from __future__ import division
 import csv, os
 from datetime import datetime
 from traceback import format_exc
-from logger import logging_msg
-from _setting import l_dir
-from multiprocess import init_multiprocessor, put_task, end_multiprocessor
+from support.logger import logging_msg
+from support._setting import l_dir
+from support.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 #
 def run():
     init_multiprocessor()

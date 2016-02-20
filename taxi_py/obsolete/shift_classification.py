@@ -2,8 +2,8 @@ from __future__ import division
 #
 import os, shutil, csv
 #
-from _setting import ds_dir, path_to_ori_data
-from logger import logging_msg
+from support._setting import ds_dir, path_to_ori_data
+from support.logger import logging_msg
 #
 def run():
 #     if os.path.exists(ds_dir):

@@ -1,12 +1,12 @@
 from __future__ import division
 
-from _setting import t_dir, ts_dir
+from support._setting import t_dir, ts_dir
 import pandas as pd
 
 import time, csv, os, shutil
 import datetime
 
-from logger import logging_msg
+from support.logger import logging_msg
 
 EPSILON = 0.00001
 
@@ -47,12 +47,6 @@ def run():
                 tstemp_et = time.mktime(next_d_datetime.timetuple()) - EPSILON
                 #
                 day_trips = df[(tstemp_st <= df[l_st]) & (df[l_st] <= tstemp_et)]
-                
-                # TODO
-                # Seperate days in hours => save file which replaces driver-id to hour
-                
-                
-                
                 grouped = day_trips.groupby(['driver-id', 'trip-mode'], sort=True)
                 tm_counting = grouped.size().to_frame('trip-mode-num')
                 fare_sum = grouped.sum()['fare'].to_frame('fare-sum')

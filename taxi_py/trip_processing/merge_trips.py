@@ -4,7 +4,7 @@ import os, sys
 import csv
 from time import time, strftime
 #
-from multiprocess import init_multiprocessor, put_task, end_multiprocessor
+from support.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 #
 _log_txt = 'log.txt'
 _stout = sys.stdout

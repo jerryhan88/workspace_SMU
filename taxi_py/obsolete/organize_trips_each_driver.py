@@ -2,8 +2,8 @@ from __future__ import division
 #
 import os, shutil, csv
 #
-from _setting import tm_dir, dt_dir
-from location_check import check_terminal_num
+from support._setting import tm_dir, dt_dir
+from support.location_check import check_terminal_num
 #
 
 driver_prev_lacation_time = {} 
