@@ -2,8 +2,9 @@ from __future__ import division
 #
 import platform, sys
 
-plf = platform.platform()
+DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP = range(4) 
 
+plf = platform.platform()
 if plf.startswith('Linux'):
     # This would be the server
     prefix = '/home/ckhan/taxi'
@@ -23,17 +24,17 @@ elif plf.startswith('Darwin'):
     prefix = '/Users/JerryHan88/taxi'
     path_to_ori_data = '/Users/JerryHan88/taxi'
 else:
-    #TODO
+    # TODO
     assert False, 'Windows?'
 assert prefix
 
-tm_dir = prefix+'/trips_merged'
-dt_dir = prefix+'/drivers_trips'
-dl_dir = prefix+'/drivers_logs'
-ds_dir = prefix+'/drivers_shifts'
-l_dir = prefix+'/logs_ext'
-t_dir = prefix+'/trips_ext'
-s_dir = prefix+ '/shifts'
-q_dir = prefix+ '/queue_data'
-op_dir = prefix+ '/opportunity_cost'
-ts_dir=prefix+'/trips_summary'
+tm_dir = prefix + '/trips_merged'
+dt_dir = prefix + '/drivers_trips'
+dl_dir = prefix + '/drivers_logs'
+ds_dir = prefix + '/drivers_shifts'
+l_dir = prefix + '/logs_ext'
+t_dir = prefix + '/trips_ext'
+s_dir = prefix + '/shifts'
+q_dir = prefix + '/queue_data'
+wf_dir = prefix + '/working_time_and_fare'
+ts_dir = prefix + '/trips_summary'

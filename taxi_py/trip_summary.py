@@ -47,6 +47,12 @@ def run():
                 tstemp_et = time.mktime(next_d_datetime.timetuple()) - EPSILON
                 #
                 day_trips = df[(tstemp_st <= df[l_st]) & (df[l_st] <= tstemp_et)]
+                
+                # TODO
+                # Seperate days in hours => save file which replaces driver-id to hour
+                
+                
+                
                 grouped = day_trips.groupby(['driver-id', 'trip-mode'], sort=True)
                 tm_counting = grouped.size().to_frame('trip-mode-num')
                 fare_sum = grouped.sum()['fare'].to_frame('fare-sum')
