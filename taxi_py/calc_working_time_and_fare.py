@@ -65,7 +65,7 @@ def process_a_month(yymm):
     pt_op_csv = '%s/wt_and_fare-%s.csv' % (wf_dir, yymm)
     with open(pt_op_csv, 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile)
-        header = ['yy', 'mm', 'dd', 'dow', 'hh', 'total-duration', 'ap-duration', 'total-fare', 'ap-fare', 'op-cost-sec', 'op-cost-min']
+        header = ['yy', 'mm', 'dd', 'dow', 'hh', 'total-duration-sec', 'ap-duration-sec', 'total-fare-cent', 'ap-fare-cent', 'op-cost-sec', 'op-cost-min']
         writer.writerow(header)
         #
         groupbed_s_dh = s_df.groupby(['day', 'hour'])
@@ -103,10 +103,11 @@ def process_a_month(yymm):
             total_fare = pp_total_fare + cp_total_fare
             ap_fare = pp_ap_fare + cp_ap_fare
             ap_duration = pp_ap_queue_trip_time + cp_ap_queue_trip_time
-            op_cost_sec = (total_fare - ap_fare) / (total_duration * SEC - ap_duration)
+            total_duration_sec = total_duration * SEC
+            op_cost_sec = (total_fare - ap_fare) / (total_duration_sec - ap_duration)
             #
             writer.writerow([yy, mm, dd, cur_period.strftime("%a"), hh, \
-                             total_duration, ap_duration, total_fare, ap_fare, op_cost_sec, op_cost_sec * SEC])
+                             total_duration_sec, ap_duration, total_fare, ap_fare, op_cost_sec, op_cost_sec * SEC])
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
         
