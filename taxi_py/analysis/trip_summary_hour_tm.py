@@ -1,11 +1,12 @@
 from __future__ import division
-
+import os, sys
+sys.path.append(os.getcwd()+'/..')
+#
 from support._setting import t_dir, tsht_dir
 from support.logger import logging_msg
 
-import os, sys, time, csv, shutil, datetime
+import time, csv, shutil, datetime
 import pandas as pd
-sys.path.append(os.getcwd()+'/..')
 
 if os.path.exists(tsht_dir):
     shutil.rmtree(tsht_dir)
