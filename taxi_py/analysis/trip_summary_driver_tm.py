@@ -1,6 +1,6 @@
 from __future__ import division
 
-from support._setting import t_dir, ts_dir
+from support._setting import t_dir, tsdt_dir
 import pandas as pd
 
 import time, csv, os, shutil
@@ -14,9 +14,9 @@ EPSILON = 0.00001
     TODO
     consider boundary condition in case when trip start in a day but ended in the next day 
 '''
-if os.path.exists(ts_dir):
-    shutil.rmtree(ts_dir)
-os.makedirs(ts_dir)
+if os.path.exists(tsdt_dir):
+    shutil.rmtree(tsdt_dir)
+os.makedirs(tsdt_dir)
 
 def run():
     for yy in ['09', '10']:
@@ -47,6 +47,9 @@ def run():
                 tstemp_et = time.mktime(next_d_datetime.timetuple()) - EPSILON
                 #
                 day_trips = df[(tstemp_st <= df[l_st]) & (df[l_st] <= tstemp_et)]
+                day_trips['hh'] = 
+                
+                
                 grouped = day_trips.groupby(['driver-id', 'trip-mode'], sort=True)
                 tm_counting = grouped.size().to_frame('trip-mode-num')
                 fare_sum = grouped.sum()['fare'].to_frame('fare-sum')
@@ -64,16 +67,19 @@ def run():
             logging_msg('end the file; %s' % yymm)
 
 def save_as_csv(yy, mm, df):
-    fn = '%s/trip-summary-%s.csv' % (ts_dir, yy + mm)
+    fn = '%s/driver-tm-%s.csv' % (tsdt_dir, yy + mm)
     if not os.path.exists(fn):
         with open(fn, 'wt') as csvFile:
             writer = csv.writer(csvFile)
-            header = ['yy', 'mm', 'dd', 'driver-id', 'trip-mode', 'trip-mode-num', 'fare-sum', 'fare-mean', 'fare-std']
+            header = ['yy', 'mm', 'dd', 'hh', 'trip-mode', 'trip-mode-num', 'fare-sum', 'fare-mean', 'fare-std']
             writer.writerow(header)
     with open(fn, 'a') as csvFile:
         writer = csv.writer(csvFile)
         for _, row in df.iterrows():
             writer.writerow([row['yy'], row['mm'], row['dd'],
+                             
+                             # TODO
+                             
                              row['driver-id'], row['trip-mode'], row['trip-mode-num'],
                              row['fare-sum'], row['fare-mean'], row['fare-std']])
     
