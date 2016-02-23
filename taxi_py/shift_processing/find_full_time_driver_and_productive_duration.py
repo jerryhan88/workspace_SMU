@@ -39,6 +39,7 @@ for fn in cvs_files:
                 if not is_driver_vehicle.has_key(vid):
                     is_driver_vehicle[vid] = []
                 is_driver_vehicle[vid].append(did)
+                print row
                 print [(row[x], type(row[x])) for x in productive_state]
                 productive_duration = sum(int(row[x]) for x in productive_state)
                 x_productive_duration = sum(int(row[x]) for x in x_productive_state)
