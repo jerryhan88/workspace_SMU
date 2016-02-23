@@ -34,13 +34,11 @@ for fn in cvs_files:
             writer = csv.writer(w_csvfile)
             new_headers = ['year', 'month', 'day', 'hour', 'driver-id', 'productive-duration', 'x-productive-duration']
             writer.writerow(new_headers)
-            for row in r_csvfile:
+            for row in reader:
                 vid, did = row[id_vid], row[id_did] 
                 if not is_driver_vehicle.has_key(vid):
                     is_driver_vehicle[vid] = []
                 is_driver_vehicle[vid].append(did)
-                print row
-                print [(row[x], type(row[x])) for x in productive_state]
                 productive_duration = sum(int(row[x]) for x in productive_state)
                 x_productive_duration = sum(int(row[x]) for x in x_productive_state)
                 writer.writerow([row[id_year],row[id_month],row[id_day],row[id_hour],did,productive_duration, x_productive_duration])
@@ -52,7 +50,7 @@ for fn in cvs_files:
         with open('%s/%s' % (ms_dir, fn), 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile)
             writer.writerow(headers)
-            for row in r_csvfile:
+            for row in reader:
                 if len(is_driver_vehicle[row[id_vid]]) > 1:
                     continue
                 writer.writerow(row)
