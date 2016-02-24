@@ -4,7 +4,7 @@ sys.path.append(os.getcwd() + '/..')
 #
 from support._setting import ms_dir
 from support.logger import logging_msg
-from support.multiprocess import init_multiprocessor, put_task, end_multiprocessor
+# from support.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 from traceback import format_exc
 #
 prefix = '/home/sfcheng/toolbox'
@@ -14,20 +14,20 @@ def run():
     if os.path.exists(ms_dir):
         shutil.rmtree(ms_dir)
     os.makedirs(ms_dir)
-    init_multiprocessor()
-    count_num_jobs = 0
+#     init_multiprocessor()
+#     count_num_jobs = 0
     cvs_files = [fn for fn in os.listdir(prefix) if fn.startswith('shift') and fn.endswith('.csv')]
     for fn in cvs_files:
         _, _, _, yymm = fn[:-len('.csv')].split('-')
         if yymm.startswith('11') or yymm.startswith('12'):
             continue
         try:
-            put_task(process_file, [fn, yymm])
+            process_file(fn, yymm)
         except Exception as _:
             logging_msg('Algorithm runtime exception (%s%s)\n' % (yymm) + format_exc())
             raise
-        count_num_jobs += 1
-    end_multiprocessor(count_num_jobs)
+#         count_num_jobs += 1
+#     end_multiprocessor(count_num_jobs)
 
 
 def process_file(fn, yymm):        
@@ -77,4 +77,5 @@ def process_file(fn, yymm):
     logging_msg('end the file; %s' % yymm)
 
 if __name__ == '__main__':
-    run()
+#     run()
+    process_file(None, '0902')
