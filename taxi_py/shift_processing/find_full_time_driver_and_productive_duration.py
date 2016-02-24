@@ -6,14 +6,17 @@ from support._setting import ms_dir
 from support.logger import logging_msg
 from support.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 from traceback import format_exc
+# from support.save_pkl import save_pickle_file, load_picle_file
 #
 prefix = '/home/sfcheng/toolbox'
+# prefix = '.'
 #
 
 def run():
     if os.path.exists(ms_dir):
         shutil.rmtree(ms_dir)
     os.makedirs(ms_dir)
+#     process_file('shift-hour-state-0901.csv', '0901')
     init_multiprocessor()
     count_num_jobs = 0
     cvs_files = [fn for fn in os.listdir(prefix) if fn.startswith('shift') and fn.endswith('.csv')]
@@ -28,7 +31,6 @@ def run():
             raise
         count_num_jobs += 1
     end_multiprocessor(count_num_jobs)
-
 
 def process_file(fn, yymm):        
     is_driver_vehicle = {}
@@ -52,8 +54,8 @@ def process_file(fn, yymm):
             for row in reader:
                 vid, did = row[id_vid], row[id_did] 
                 if not is_driver_vehicle.has_key(vid):
-                    is_driver_vehicle[vid] = []
-                is_driver_vehicle[vid].append(did)
+                    is_driver_vehicle[vid] = set()
+                is_driver_vehicle[vid].add(did)
                 productive_duration = sum(int(row[x]) for x in productive_state)
                 x_productive_duration = sum(int(row[x]) for x in x_productive_state)
                 writer.writerow([row[id_year], row[id_month], row[id_day], row[id_hour], vid, did, productive_duration, x_productive_duration])
@@ -74,11 +76,12 @@ def process_file(fn, yymm):
                 productive_duration, x_productive_duration = int(row[id_productive]), int(row[id_x_productive]) 
                 if productive_duration == 0 and x_productive_duration == 0:
                     continue
-                writer.writerow([row[id_year], row[id_month], row[id_day], row[id_hour], did, productive_duration, x_productive_duration])
-    os.remove('%s/temp_%s' % (ms_dir, fn))
+                writer.writerow([row[id_year], row[id_month], row[id_day], row[id_hour], row[id_did], productive_duration, x_productive_duration])
+#     os.remove('%s/temp_%s' % (ms_dir, fn))
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
 
 if __name__ == '__main__':
+#     test()
     run()
 #     process_file(None, '0902')
