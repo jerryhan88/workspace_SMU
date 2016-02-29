@@ -6,7 +6,12 @@ from support._setting import ms_dir
 from support.handling_pkl import save_pickle_file
 
 def run():
-    process_file('0901')
+    for y in xrange(9, 11):
+        for m in xrange(1, 13):
+            yymm = '%02d%02d' % (y, m)
+            if yymm in ['0912', '1010']:
+                continue
+            process_file(yymm)
     
 def process_file(yymm):
     full_vid_did = set()

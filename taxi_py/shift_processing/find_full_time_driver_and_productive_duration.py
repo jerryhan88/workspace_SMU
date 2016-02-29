@@ -6,7 +6,6 @@ from support._setting import ms_dir
 from support.logger import logging_msg
 from support.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 from traceback import format_exc
-# from support.save_pkl import save_pickle_file, load_picle_file
 #
 prefix = '/home/sfcheng/toolbox'
 # prefix = '.'
