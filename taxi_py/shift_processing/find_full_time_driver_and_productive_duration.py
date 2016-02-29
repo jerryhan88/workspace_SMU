@@ -77,7 +77,7 @@ def process_file(fn, yymm):
                 if productive_duration == 0 and x_productive_duration == 0:
                     continue
                 writer.writerow([row[id_year], row[id_month], row[id_day], row[id_hour], row[id_vid], row[id_did], productive_duration, x_productive_duration])
-#     os.remove('%s/temp_%s' % (ms_dir, fn))
+    os.remove('%s/temp_%s' % (ms_dir, fn))
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
 
