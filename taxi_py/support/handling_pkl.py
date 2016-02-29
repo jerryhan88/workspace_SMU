@@ -14,8 +14,7 @@ import pickle
 #     return IS, NS, LS
 
 def save_pickle_file(path, _objects):
-    pkl_path = path + '.pkl'
-    with open(pkl_path, 'wb') as fp:
+    with open(path, 'wb') as fp:
         pickle.dump(_objects, fp)
         
 def load_picle_file(path):
