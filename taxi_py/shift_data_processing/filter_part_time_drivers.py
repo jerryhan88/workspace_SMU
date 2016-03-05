@@ -36,9 +36,9 @@ def process_file(fn):
     with open('%s/%s' % (shift_dir, fn), 'rt') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
-        id_year, id_month, id_day, id_hour = headers.index('year'), headers.index('month'), headers.index('day'), headers.index('hour')
-        id_vid, id_did = headers.index('vehicle-id'), headers.index('driver-id')
-        id_productive, id_x_productive = headers.index('productive-duration'), headers.index('x-productive-duration')
+        id_yy, id_mm, id_dd, id_hh = headers.index('yy'), headers.index('mm'), headers.index('dd'), headers.index('hh')
+        id_vid, id_did = headers.index('vid'), headers.index('did')
+        id_pro_dur, id_x_pro_dur = headers.index('pro-dur'), headers.index('x-pro-dur')
         with open('%s/shift-full-time-%s.csv' % (full_shift_dir, yymm), 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile)
             new_headers = ['year', 'month', 'day', 'hour', 'vehicle-id', 'driver-id', 'productive-duration', 'x-productive-duration']
@@ -46,10 +46,7 @@ def process_file(fn):
             for row in reader:
                 if len(is_driver_vehicle[row[id_vid]]) > 1:
                     continue
-                productive_duration, x_productive_duration = int(row[id_productive]), int(row[id_x_productive]) 
-                if productive_duration == 0 and x_productive_duration == 0:
-                    continue
-                writer.writerow([row[id_year], row[id_month], row[id_day], row[id_hour], row[id_vid], row[id_did], productive_duration, x_productive_duration])
+                writer.writerow([row[id_yy], row[id_mm], row[id_dd], row[id_hh], row[id_vid], row[id_did], row[id_pro_dur], row[id_x_pro_dur]])
                 full_drivers.add(row[id_did])
     save_pickle_file('%s/full-time-drivers-%s.pkl' % (full_shift_dir, yymm), full_drivers)
     print 'end the file; %s' % yymm
