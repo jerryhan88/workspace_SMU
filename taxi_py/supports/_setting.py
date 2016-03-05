@@ -1,10 +1,6 @@
 from __future__ import division
 
-import platform, os, sys
-#, csv
-
-# Add the root path for packages I made  
-sys.path.append(os.getcwd() + '/..')
+import platform, sys
 
 # Check environments and set a prefix for finding files and libraries
 plf = platform.platform()
