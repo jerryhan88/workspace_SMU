@@ -22,19 +22,20 @@ def run():
     remove_creat_dir(shift_dir)
     csv_files = get_all_csv_files(prefix)
     #
-    init_multiprocessor()
-    count_num_jobs = 0
-    for fn in csv_files:
-        _, _, _, yymm = fn[:-len('.csv')].split('-')
-        if yymm.startswith('11') or yymm.startswith('12'):
-            continue
-        try:
-            put_task(process_file, [fn])
-        except Exception as _:
-            logging_msg('Algorithm runtime exception (%s)\n' % (yymm) + format_exc())
-            raise
-        count_num_jobs += 1
-    end_multiprocessor(count_num_jobs)
+    process_file(csv_files[0])
+#     init_multiprocessor()
+#     count_num_jobs = 0
+#     for fn in csv_files:
+#         _, _, _, yymm = fn[:-len('.csv')].split('-')
+#         if yymm.startswith('11') or yymm.startswith('12'):
+#             continue
+#         try:
+#             put_task(process_file, [fn])
+#         except Exception as _:
+#             logging_msg('Algorithm runtime exception (%s)\n' % (yymm) + format_exc())
+#             raise
+#         count_num_jobs += 1
+#     end_multiprocessor(count_num_jobs)
 
 def process_file(fn):
     _, _, _, yymm = fn[:-len('.csv')].split('-')        
