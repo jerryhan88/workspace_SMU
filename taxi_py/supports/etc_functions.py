@@ -7,4 +7,4 @@ def remove_creat_dir(path):
     os.makedirs(path)
     
 def get_all_csv_files(path):
-    return [fn for fn in os.listdir(path) if fn.startswith('shift') and fn.endswith('.csv')]
+    return [fn for fn in os.listdir(path) if fn.endswith('.csv')]

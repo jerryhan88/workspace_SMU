@@ -15,6 +15,7 @@ from supports.multiprocess import init_multiprocessor, put_task, end_multiproces
 def run():
     remove_creat_dir(full_shift_dir)
     csv_files = get_all_csv_files(shift_dir)
+    print csv_files
     init_multiprocessor()
     count_num_jobs = 0
     for fn in csv_files:
@@ -28,6 +29,9 @@ def run():
     
 def process_file(fn):
     _, _, yymm = fn[:-len('.csv')].split('-')
+    print 'handle the file; %s' % yymm
+    logging_msg('handle the file; %s' % yymm)
+    #
     is_driver_vehicle = load_picle_file('%s/driver-vehicle-%s.pkl' % (shift_dir, yymm))
     full_drivers = set()
     with open('%s/%s' % (shift_dir, fn), 'rt') as r_csvfile:

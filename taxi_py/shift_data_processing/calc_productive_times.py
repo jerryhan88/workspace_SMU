@@ -33,10 +33,11 @@ def run():
     end_multiprocessor(count_num_jobs)
 
 def process_file(fn):
-    _, _, _, yymm = fn[:-len('.csv')].split('-')        
-    is_driver_vehicle = {}
+    _, _, _, yymm = fn[:-len('.csv')].split('-')
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
+    #        
+    is_driver_vehicle = {}
     with open('%s/%s' % (server_prefix, fn), 'rt') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
