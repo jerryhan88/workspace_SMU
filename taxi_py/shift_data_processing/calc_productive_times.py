@@ -21,6 +21,7 @@ server_prefix = '/home/sfcheng/toolbox'
 def run():
     remove_creat_dir(shift_dir)
     csv_files = get_all_csv_files(prefix)
+    print csv_files 
     #
     process_file(csv_files[0])
 #     init_multiprocessor()
