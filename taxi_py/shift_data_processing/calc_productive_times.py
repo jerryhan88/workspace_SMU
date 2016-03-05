@@ -7,7 +7,7 @@ import csv
 from traceback import format_exc
 #
 from supports._setting import shift_dir 
-from supports.etc_functions import remove_creat_dir, get_all_csv_files
+from supports.etc_functions import remove_creat_dir, get_all_files
 from supports.logger import logging_msg
 from supports.handling_pkl import save_pickle_file
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
@@ -17,7 +17,7 @@ server_prefix = '/home/sfcheng/toolbox'
 #
 def run():
     remove_creat_dir(shift_dir)
-    csv_files = get_all_csv_files(server_prefix)
+    csv_files = get_all_files(server_prefix, 'shift', '.csv')
     init_multiprocessor()
     count_num_jobs = 0
     for fn in csv_files:

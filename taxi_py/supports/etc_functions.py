@@ -6,5 +6,5 @@ def remove_creat_dir(path):
         shutil.rmtree(path)
     os.makedirs(path)
     
-def get_all_csv_files(path):
-    return [fn for fn in os.listdir(path) if fn.endswith('.csv')]
+def get_all_files(path, filtering_prefix, filtering_postfix):
+    return [fn for fn in os.listdir(path) if fn.startswith(filtering_prefix) and fn.endswith(filtering_postfix)]
