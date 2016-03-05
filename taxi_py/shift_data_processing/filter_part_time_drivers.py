@@ -15,7 +15,6 @@ from supports.multiprocess import init_multiprocessor, put_task, end_multiproces
 def run():
     remove_creat_dir(full_shift_dir)
     csv_files = get_all_csv_files(shift_dir)
-    print csv_files
     init_multiprocessor()
     count_num_jobs = 0
     for fn in csv_files:
@@ -55,3 +54,6 @@ def process_file(fn):
     save_pickle_file('%s/full-time-drivers-%s.pkl' % (full_shift_dir, yymm), full_drivers)
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
+    
+if __name__ == '__main__':
+    run()
