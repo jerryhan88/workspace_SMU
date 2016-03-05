@@ -2,3 +2,5 @@
 /_setting.pyc
 /charts.pyc
 /logger.pyc
+/handling_pkl.pyc
+/multiprocess.pyc
