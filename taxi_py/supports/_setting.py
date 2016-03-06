@@ -31,3 +31,4 @@ shift_dir = prefix + '/shifts'
 full_shift_dir = shift_dir + '/full_time_drivers' 
 #
 log_ext_dir = prefix + '/log_ext'
+log_last_day_dir = log_ext_dir + '/log_last_day'
