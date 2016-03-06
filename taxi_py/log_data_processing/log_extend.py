@@ -12,8 +12,8 @@ from supports.logger import logging_msg
 from supports.location_check import is_in_airport
 
 TARGET_YEARS = ['2009', '2010']
-# server_prefix = '/home/taxi'
-server_prefix = '/Users/JerryHan88/taxi'
+server_prefix = '/home/taxi'
+# server_prefix = '/Users/JerryHan88/taxi'
 
 def run():
     remove_creat_dir(log_ext_dir)
@@ -33,8 +33,8 @@ def run():
     init_multiprocessor()
     count_num_jobs = 0
     for path_to_csv_file in csv_file_paths:
-        process_file(path_to_csv_file)
-#         put_task(process_file, [path_to_csv_file])
+#         process_file(path_to_csv_file)
+        put_task(process_file, [path_to_csv_file])
         count_num_jobs += 1
     end_multiprocessor(count_num_jobs)     
 
