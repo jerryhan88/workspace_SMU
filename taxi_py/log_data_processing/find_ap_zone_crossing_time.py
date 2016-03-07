@@ -43,7 +43,7 @@ def process_file(fn):
             if temp_fn.startswith('logs-%s' % yymm):
                 prev_fn = temp_fn
                 break
-        assert prev_fn 
+        assert prev_fn, yymm 
         path_to_last_day_csv_file = '%s/%s' % (log_last_day_dir, prev_fn) 
         vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not = \
                         record_crossing_time(path_to_last_day_csv_file, vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not)
