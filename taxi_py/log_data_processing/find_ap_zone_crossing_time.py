@@ -40,7 +40,11 @@ def process_file(fn):
         temp_csv_files = get_all_files(log_last_day_dir, '', '.csv')
         prev_fn = None
         for temp_fn in temp_csv_files:
-            if temp_fn.startswith('logs-%s' % yymm):
+            y, m = int(yymm[:2]), int(yymm[2:])
+            prev_m = m - 1
+            prev_yymm = '%2d%2d' %(y, prev_m)
+            print yymm, prev_yymm 
+            if temp_fn.startswith('logs-%s' % prev_yymm):
                 prev_fn = temp_fn
                 break
         assert prev_fn, yymm 
