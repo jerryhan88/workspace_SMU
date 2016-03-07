@@ -29,11 +29,21 @@ def run():
     end_multiprocessor(count_num_jobs)
 
 def process_file(fn):
-    _, yymm = fn[:-len('.csv')].split('-')
+#     _, yymm = fn[:-len('.csv')].split('-')
+    _, yymm, _ = fn[:-len('.csv')].split('-')
+    
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
     if yymm not in ['0901', '1001', '1011']:
         path_to_last_day_csv_file = None
+        temp_csv_files = get_all_files(log_last_day_dir, '', '.csv')
+        prev_fn = None
+        for temp_fn in temp_csv_files:
+            if temp_fn.startswith('logs-%s'%yymm):
+                prev_fn = temp_fn
+                break
+        assert prev_fn 
+        path_to_last_day_csv_file = '%s/%s' % (log_last_day_dir, prev_fn) 
         vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not = \
                         record_crossing_time(path_to_last_day_csv_file)
     path_to_csv_file = '%s/%s' % (log_ext_dir, fn)

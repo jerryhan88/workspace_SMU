@@ -15,11 +15,9 @@ if plf.startswith('Linux'):
         print 'This python is not 2.7 version'
         assert False
     #
-    path_to_ori_data = '/home/taxi'
 elif plf.startswith('Darwin'):
     # This is my Macbook Pro
     prefix = '/Users/JerryHan88/taxi'
-    path_to_ori_data = '/Users/JerryHan88/taxi'
 else:
     # TODO
     assert False, 'Windows?'
@@ -32,5 +30,9 @@ full_shift_dir = shift_dir + '/full_time_drivers'
 #
 log_ext_dir = prefix + '/logs'
 log_last_day_dir = log_ext_dir + '/logs_last_day'
+
+log_ext_dir = prefix + '/logs_ext_backup'
+log_last_day_dir = log_ext_dir + '/logs_last_day'
+
 #
 trip_ext_dir = prefix + '/trips'
