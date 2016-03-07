@@ -20,8 +20,8 @@ def run():
     count_num_jobs = 0
     for fn in csv_files:
         try:
-#             process_file(fn)
-            put_task(process_file, [fn])
+            process_file(fn)
+#             put_task(process_file, [fn])
         except Exception as _:
             logging_msg('Algorithm runtime exception (%s)\n' % (fn) + format_exc())
             raise
