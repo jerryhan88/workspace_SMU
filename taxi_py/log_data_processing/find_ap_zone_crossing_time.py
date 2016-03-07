@@ -20,8 +20,8 @@ def run():
     count_num_jobs = 0
     for fn in csv_files:
         try:
-            process_file(fn)
-#             put_task(process_file, [fn])
+#             process_file(fn)
+            put_task(process_file, [fn])
         except Exception as _:
             logging_msg('Algorithm runtime exception (%s)\n' % (fn) + format_exc())
             raise
@@ -41,7 +41,7 @@ def process_file(fn):
         prev_fn = None
         y, m = int(yymm[:2]), int(yymm[2:])
         prev_m = m - 1
-        prev_yymm = '%2d%2d' %(y, prev_m)
+        prev_yymm = '%02d0%2d' %(y, prev_m)
         print yymm, prev_yymm 
         for temp_fn in temp_csv_files:
             if temp_fn.startswith('logs-%s' % prev_yymm):
