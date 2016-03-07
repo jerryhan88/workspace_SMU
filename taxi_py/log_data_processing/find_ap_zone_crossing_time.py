@@ -39,11 +39,11 @@ def process_file(fn):
         path_to_last_day_csv_file = None
         temp_csv_files = get_all_files(log_last_day_dir, '', '.csv')
         prev_fn = None
+        y, m = int(yymm[:2]), int(yymm[2:])
+        prev_m = m - 1
+        prev_yymm = '%2d%2d' %(y, prev_m)
+        print yymm, prev_yymm 
         for temp_fn in temp_csv_files:
-            y, m = int(yymm[:2]), int(yymm[2:])
-            prev_m = m - 1
-            prev_yymm = '%2d%2d' %(y, prev_m)
-            print yymm, prev_yymm 
             if temp_fn.startswith('logs-%s' % prev_yymm):
                 prev_fn = temp_fn
                 break
