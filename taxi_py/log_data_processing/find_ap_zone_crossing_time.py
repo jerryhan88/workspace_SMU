@@ -41,7 +41,7 @@ def process_file(fn):
         prev_fn = None
         y, m = int(yymm[:2]), int(yymm[2:])
         prev_m = m - 1
-        prev_yymm = '%02d0%2d' %(y, prev_m)
+        prev_yymm = '%02d%02d' %(y, prev_m)
         print yymm, prev_yymm 
         for temp_fn in temp_csv_files:
             if temp_fn.startswith('logs-%s' % prev_yymm):
