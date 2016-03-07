@@ -1,21 +1,68 @@
-def process_file(path_to_csv_file):
-    ori_log_fn = path_to_csv_file.split('/')[-1]
-    _, yymm, _ = ori_log_fn.split('-')
-    print 'handle the file; %s' % yymm 
-    logging_msg('handle the file; %s' % yymm )
-    vehicle_ap_crossing_time_from_out_to_in = {}
-    vehicle_current_ap_or_not = {}
+from __future__ import division
+# Add the root path for packages I made
+import os, sys  
+sys.path.append(os.getcwd() + '/..')
+#
+import csv
+from traceback import format_exc
+#
+from supports._setting import log_ext_dir, log_last_day_dir
+from supports.etc_functions import get_all_files
+from supports.handling_pkl import save_pickle_file
+from supports.logger import logging_msg
+from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
+from supports.location_check import IN_AP, OUT_AP
+
+def run():
+    csv_files = get_all_files(log_ext_dir, '', '.csv')
+    #
+    init_multiprocessor()
+    count_num_jobs = 0
+    for fn in csv_files:
+        try:
+#             process_file(fn)
+            put_task(process_file, [fn])
+        except Exception as _:
+            logging_msg('Algorithm runtime exception (%s)\n' % (fn) + format_exc())
+            raise
+        count_num_jobs += 1
+    end_multiprocessor(count_num_jobs)
+
+def process_file(fn):
+    _, yymm = fn[:-len('.csv')].split('-')
+    print 'handle the file; %s' % yymm
+    logging_msg('handle the file; %s' % yymm)
+    if yymm not in ['0901', '1001', '1011']:
+        path_to_last_day_csv_file = None
+        vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not = \
+                        record_crossing_time(path_to_last_day_csv_file)
+    path_to_csv_file = '%s/%s' % (log_ext_dir, fn)
+    vehicle_ap_crossing_time_from_out_to_in, _ = \
+            record_crossing_time(path_to_csv_file, vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not)
+    #
+    save_pickle_file('%s/crossing-time-%s.pkl' % (log_ext_dir, yymm), vehicle_ap_crossing_time_from_out_to_in)
+    print 'end the file; %s' % yymm
+    logging_msg('end the file; %s' % yymm)
+    
+def record_crossing_time(path_to_csv_file, vehicle_ap_crossing_time_from_out_to_in={}, vehicle_last_log_ap_or_not={}):
     with open(path_to_csv_file, 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
-        id_time, id_vid, id_did = headers.index('time'), headers.index('vehicle-id'), headers.index('driver-id')
-        index_long, index_lat = headers.index('longitude'), headers.index('latitude')
-        for row in reader:        
-            ap_or_not = is_in_airport(eval(row[index_long]), eval(row[index_lat]))
-            t = eval(row[id_time])
-            vid = row[id_vid]
-            vehicle_current_ap_or_not.setdefault(vid, )
-            
-            if True:
-                crossing_time = None
-                vehicle_ap_crossing_time_from_out_to_in.setdefault(vid, [t]).append(crossing_time)
+        id_time, id_vid, id_did, id_ap_or_not = headers.index('time'), headers.index('vid'), headers.index('did'), headers.index('ap-or-not')
+        for row in reader:
+            t, vid, _, ap_or_not = eval(row[id_time]), row[id_vid], row[id_did], row[id_vid], row[id_ap_or_not]
+            #
+            if not vehicle_last_log_ap_or_not.has_key(vid):
+                if ap_or_not == IN_AP:
+                    # the first log's position was occured in the AP zone
+                    assert not vehicle_ap_crossing_time_from_out_to_in.has_key(vid)
+                    vehicle_ap_crossing_time_from_out_to_in[vid] = [t]
+            else:
+                assert vehicle_last_log_ap_or_not.has_key(vid)
+                if vehicle_last_log_ap_or_not[vid] == OUT_AP and ap_or_not == IN_AP:
+                    vehicle_ap_crossing_time_from_out_to_in.setdefault(vid, [t]).append(t)
+            vehicle_last_log_ap_or_not[vid] = ap_or_not
+    return vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not 
+                
+if __name__ == '__main__':
+    run()

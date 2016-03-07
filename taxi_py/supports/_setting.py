@@ -30,5 +30,7 @@ DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP = range(4)
 shift_dir = prefix + '/shifts'
 full_shift_dir = shift_dir + '/full_time_drivers' 
 #
-log_ext_dir = prefix + '/log_ext'
-log_last_day_dir = log_ext_dir + '/log_last_day'
+log_ext_dir = prefix + '/logs'
+log_last_day_dir = log_ext_dir + '/logs_last_day'
+#
+trip_ext_dir = prefix + '/trips'
