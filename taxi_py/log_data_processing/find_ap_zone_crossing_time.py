@@ -31,7 +31,7 @@ def run():
 def process_file(fn):
 #     _, yymm = fn[:-len('.csv')].split('-')
     _, yymm, _ = fn[:-len('.csv')].split('-')
-    
+    #
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
     vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not = {}, {}
@@ -42,7 +42,6 @@ def process_file(fn):
         y, m = int(yymm[:2]), int(yymm[2:])
         prev_m = m - 1
         prev_yymm = '%02d%02d' %(y, prev_m)
-        print yymm, prev_yymm 
         for temp_fn in temp_csv_files:
             if temp_fn.startswith('logs-%s' % prev_yymm):
                 prev_fn = temp_fn
