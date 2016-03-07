@@ -46,7 +46,7 @@ def process_file(fn):
         assert prev_fn 
         path_to_last_day_csv_file = '%s/%s' % (log_last_day_dir, prev_fn) 
         vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not = \
-                        record_crossing_time(path_to_last_day_csv_file)
+                        record_crossing_time(path_to_last_day_csv_file, vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not)
     path_to_csv_file = '%s/%s' % (log_ext_dir, fn)
     vehicle_ap_crossing_time_from_out_to_in, _ = \
             record_crossing_time(path_to_csv_file, vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not)
