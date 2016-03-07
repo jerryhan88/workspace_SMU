@@ -61,7 +61,7 @@ def record_crossing_time(path_to_csv_file, vehicle_ap_crossing_time_from_out_to_
 #         id_time, id_vid, id_did, id_ap_or_not = headers.index('time'), headers.index('vid'), headers.index('did'), headers.index('ap-or-not')
         id_time, id_vid, id_did, id_ap_or_not = headers.index('time'), headers.index('vehicle-id'), headers.index('driver-id'), headers.index('ap-or-not')
         for row in reader:
-            t, vid, _, ap_or_not = eval(row[id_time]), row[id_vid], row[id_did], row[id_vid], row[id_ap_or_not]
+            t, vid, _, ap_or_not = eval(row[id_time]), row[id_vid], row[id_did], row[id_ap_or_not]
             #
             if not vehicle_last_log_ap_or_not.has_key(vid):
                 if ap_or_not == IN_AP:
