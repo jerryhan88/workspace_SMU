@@ -31,8 +31,8 @@ full_shift_dir = shift_dir + '/full_time_drivers'
 log_ext_dir = prefix + '/logs'
 log_last_day_dir = log_ext_dir + '/logs_last_day'
 
-log_ext_dir = prefix + '/logs_ext_backup'
-log_last_day_dir = log_ext_dir + '/logs_last_day'
+# log_ext_dir = prefix + '/logs_ext_backup'
+# log_last_day_dir = log_ext_dir + '/logs_last_day'
 
 #
 trip_ext_dir = prefix + '/trips'
