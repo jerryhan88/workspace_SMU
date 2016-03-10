@@ -4,7 +4,7 @@ import multiprocessing as mp
 
 _tasks, _results = mp.JoinableQueue(), mp.Queue()
 # _num_workers = mp.cpu_count() - 1
-_num_workers = 8
+_num_workers = 6
 
 class Worker(mp.Process):
     def __init__(self, task_queue, result_queue):
