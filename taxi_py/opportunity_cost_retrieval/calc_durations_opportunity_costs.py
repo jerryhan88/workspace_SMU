@@ -3,14 +3,14 @@ from __future__ import division
 import os, sys  
 sys.path.append(os.getcwd() + '/..')
 #
-import datetime, time, csv
-import pandas as pd
-from traceback import format_exc
-#
 from supports._setting import shifts_dir, trips_dir, aiport_trips_dir, op_costs_dir
 from supports.etc_functions import remove_creat_dir
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 from supports.logger import logging_msg
+#
+import datetime, time, csv
+import pandas as pd
+from traceback import format_exc
 #
 sh_prefix, trip_prefix, ap_trip_prefix = 'shift-all-', 'whole-trip-', 'airport-trip-'
 TOTAL_DUR, TOTAL_FARE, AP_QUEUE, AP_DUR, AP_FARE = range(5)
