@@ -5,7 +5,7 @@ sys.path.append(os.getcwd() + '/..')
 #
 import csv
 #
-from supports._setting import log_ext_dir
+from supports._setting import logs_dir
 from supports.etc_functions import remove_creat_dir
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 from supports.logger import logging_msg
@@ -16,7 +16,7 @@ server_prefix = '/home/taxi'
 # server_prefix = '/Users/JerryHan88/taxi'
 
 def run():
-    remove_creat_dir(log_ext_dir)
+    remove_creat_dir(logs_dir)
     csv_file_paths = []
     for yd in os.listdir(server_prefix):
         yd_path = '%s/%s' % (server_prefix, yd)
@@ -49,7 +49,7 @@ def process_file(path_to_csv_file):
         headers = reader.next()
         id_time, id_vid, id_did = headers.index('time'), headers.index('vehicle-id'), headers.index('driver-id')
         index_long, index_lat = headers.index('longitude'), headers.index('latitude')
-        with open('%s/log-%s.csv' % (log_ext_dir, yymm), 'wt') as w_csvfile:
+        with open('%s/log-%s.csv' % (logs_dir, yymm), 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile)
             new_headers = ['time', 'vid', 'did', 'ap-or-not']
             writer.writerow(new_headers)

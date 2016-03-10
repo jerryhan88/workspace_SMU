@@ -6,7 +6,7 @@ sys.path.append(os.getcwd() + '/..')
 import csv
 from traceback import format_exc
 #
-from supports._setting import shift_dir, full_shift_dir
+from supports._setting import shifts_dir, full_shift_dir
 from supports.etc_functions import remove_creat_dir, get_all_files
 from supports.handling_pkl import save_pickle_file, load_picle_file
 from supports.logger import logging_msg
@@ -14,7 +14,7 @@ from supports.multiprocess import init_multiprocessor, put_task, end_multiproces
 
 def run():
     remove_creat_dir(full_shift_dir)
-    csv_files = get_all_files(shift_dir, '', '.csv')
+    csv_files = get_all_files(shifts_dir, '', '.csv')
     init_multiprocessor()
     count_num_jobs = 0
     for fn in csv_files:
@@ -31,9 +31,9 @@ def process_file(fn):
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
     #
-    is_driver_vehicle = load_picle_file('%s/driver-vehicle-%s.pkl' % (shift_dir, yymm))
+    is_driver_vehicle = load_picle_file('%s/driver-vehicle-%s.pkl' % (shifts_dir, yymm))
     full_drivers = set()
-    with open('%s/%s' % (shift_dir, fn), 'rt') as r_csvfile:
+    with open('%s/%s' % (shifts_dir, fn), 'rt') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
         id_yy, id_mm, id_dd, id_hh = headers.index('yy'), headers.index('mm'), headers.index('dd'), headers.index('hh')

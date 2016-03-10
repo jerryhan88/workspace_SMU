@@ -1,5 +1,6 @@
 from __future__ import division
 import os, shutil
+import datetime
 
 def remove_creat_dir(path):
     if os.path.exists(path):
@@ -8,3 +9,13 @@ def remove_creat_dir(path):
     
 def get_all_files(path, filtering_prefix, filtering_postfix):
     return [fn for fn in os.listdir(path) if fn.startswith(filtering_prefix) and fn.endswith(filtering_postfix)]
+
+def get_date(_timestamp):
+    return datetime.datetime.fromtimestamp(_timestamp).strftime('%Y-%m-%d %H:%M:%S')
+
+if __name__ == '__main__':
+    print get_date(1231119063)
+                                  
+                                  
+                                  
+    

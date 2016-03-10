@@ -6,7 +6,7 @@ sys.path.append(os.getcwd() + '/..')
 import csv
 from traceback import format_exc
 #
-from supports._setting import log_ext_dir, log_last_day_dir
+from supports._setting import logs_dir, log_last_day_dir
 from supports.etc_functions import get_all_files
 from supports.handling_pkl import save_pickle_file
 from supports.logger import logging_msg
@@ -14,7 +14,7 @@ from supports.multiprocess import init_multiprocessor, put_task, end_multiproces
 from supports.location_check import IN_AP, OUT_AP
 
 def run():
-    csv_files = get_all_files(log_ext_dir, '', '.csv')
+    csv_files = get_all_files(logs_dir, '', '.csv')
     #
     init_multiprocessor()
     count_num_jobs = 0
@@ -50,11 +50,11 @@ def process_file(fn):
         path_to_last_day_csv_file = '%s/%s' % (log_last_day_dir, prev_fn) 
         vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not = \
                         record_crossing_time(path_to_last_day_csv_file, vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not)
-    path_to_csv_file = '%s/%s' % (log_ext_dir, fn)
+    path_to_csv_file = '%s/%s' % (logs_dir, fn)
     vehicle_ap_crossing_time_from_out_to_in, _ = \
             record_crossing_time(path_to_csv_file, vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not)
     #
-    save_pickle_file('%s/crossing-time-%s.pkl' % (log_ext_dir, yymm), vehicle_ap_crossing_time_from_out_to_in)
+    save_pickle_file('%s/crossing-time-%s.pkl' % (logs_dir, yymm), vehicle_ap_crossing_time_from_out_to_in)
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
     
