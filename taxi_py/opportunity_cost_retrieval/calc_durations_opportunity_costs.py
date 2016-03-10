@@ -129,9 +129,11 @@ def process_files(yymm):
         header = ['yy', 'mm', 'dd', 'hh', 'total-duration', 'total-fare', 'ap-queue', 'ap-duration', 'ap-fare', 'op-cost-sec']
         writer.writerow(header)
         for yyyy, mm, dd, hh in time_period_order:
-            total_dur, total_fare, ap_queue, ap_dur, ap_fare = dur_fare[(yyyy, mm, dd, hh)]
+            total_dur, total_fare, ap_queue, ap_dur, ap_fare = dur_fare[(yyyy, mm, dd, hh)] 
             ap_out_fare = total_fare - ap_fare
             ap_out_dur = total_dur - (ap_queue + ap_dur)
+            if ap_out_dur == 0:
+                continue
             op_cost = ap_out_fare / ap_out_dur
             writer.writerow([
                              yyyy-2000, mm, dd, hh,
