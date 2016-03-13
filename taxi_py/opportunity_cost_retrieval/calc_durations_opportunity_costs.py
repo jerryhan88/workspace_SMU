@@ -66,6 +66,7 @@ def process_files(yymm):
     st_label, et_label = 'start-time', 'end-time'
     fare_label = 'fare'
     while cur_day_time != last_day_time:
+        print cur_day_time 
         prev_day_time = cur_day_time - datetime.timedelta(hours=1)
         next_day_time = cur_day_time + datetime.timedelta(hours=1)
         st_timestamp, et_timestamp = time.mktime(cur_day_time.timetuple()), time.mktime(next_day_time.timetuple())
