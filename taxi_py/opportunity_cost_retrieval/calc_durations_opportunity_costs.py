@@ -27,9 +27,9 @@ def run():
                 yymm = '%02d%02d' % (y, m) 
                 if yymm in ['0912', '1010']:
                     continue
-                process_files('1007')
-                assert False
-#                 put_task(process_files, [yymm])
+#                 process_files('1007')
+#                 assert False
+                put_task(process_files, [yymm])
             except Exception as _:
                 logging_msg('Algorithm runtime exception (%s)\n' % (yymm) + format_exc())
                 raise
