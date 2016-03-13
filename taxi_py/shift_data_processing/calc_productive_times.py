@@ -37,7 +37,7 @@ def process_file(fn):
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
     #        
-    is_driver_vehicle = {}
+    driver_vehicle = {}
     with open('%s/%s' % (server_prefix, fn), 'rt') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
@@ -58,8 +58,8 @@ def process_file(fn):
                 productive_duration = sum(int(row[x]) for x in productive_state)
                 x_productive_duration = sum(int(row[x]) for x in x_productive_state)
                 writer.writerow([row[id_year][-2:], row[id_month], row[id_day], row[id_hour], vid, did, productive_duration, x_productive_duration])
-                is_driver_vehicle.setdefault(vid, set()).add(did)
-    save_pickle_file('%s/driver-vehicle-%s.pkl' % (shifts_dir, yymm), is_driver_vehicle)
+                driver_vehicle.setdefault(vid, set()).add(did)
+    save_pickle_file('%s/driver-vehicle-%s.pkl' % (shifts_dir, yymm), driver_vehicle)
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
     

@@ -22,9 +22,10 @@ else:
     # TODO
     assert False, 'Windows?'
 assert prefix
-
+#
 DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP = range(4)
-
+Q_LIMIT_MIN, Q_LIMIT_MAX = 0, 3600
+#
 shifts_dir = prefix + '/shifts'
 full_shift_dir = shifts_dir + '/full_time_drivers' 
 #
@@ -35,3 +36,4 @@ trips_dir = prefix + '/trips'
 aiport_trips_dir = trips_dir + '/airport_trips' 
 #
 op_costs_dir = prefix + '/op_costs'
+op_cost_summary = op_costs_dir + '/op-cost-summary.csv' 
