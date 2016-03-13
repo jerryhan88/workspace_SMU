@@ -66,7 +66,6 @@ def process_files(yymm):
     st_label, et_label = 'start-time', 'end-time'
     fare_label = 'fare'
     while cur_day_time != last_day_time:
-        print cur_day_time 
         prev_day_time = cur_day_time - datetime.timedelta(hours=1)
         next_day_time = cur_day_time + datetime.timedelta(hours=1)
         st_timestamp, et_timestamp = time.mktime(cur_day_time.timetuple()), time.mktime(next_day_time.timetuple())
@@ -84,32 +83,34 @@ def process_files(yymm):
         next_total_fare = sum(filtered_trip['out-fare'])
         #
         filtered_ap_trip = ap_trip_df[(st_timestamp <= ap_trip_df[st_label]) & (ap_trip_df[et_label] < et_timestamp)]
-        #
-        q_limit_max_ex = filtered_ap_trip[(Q_LIMIT_MAX < filtered_ap_trip['queue-time'])]
-        q_limit_max_ex['join-queue-time'] = q_limit_max_ex[st_label] - Q_LIMIT_MAX
-        q_limit_max_ex['prev-queue-time'] = st_timestamp - q_limit_max_ex['join-queue-time'] 
-        q_limit_max_ex['cur-queue-time'] = q_limit_max_ex[st_label] - st_timestamp
-        prev_queue_time = sum(q_limit_max_ex['prev-queue-time'])
-        cur_queue_time = sum(q_limit_max_ex['cur-queue-time'])
-        #
-        q_normal = filtered_ap_trip[(Q_LIMIT_MIN <= filtered_ap_trip['queue-time']) & \
-                                   (filtered_ap_trip['queue-time'] <= Q_LIMIT_MAX)]
-        q_normal['prev-queue-time'] = st_timestamp - q_normal['join-queue-time'] 
-        q_normal['cur-queue-time'] = q_normal[st_label] - st_timestamp
-        prev_queue_time += sum(q_normal['prev-queue-time'])
-        cur_queue_time += sum(q_normal['cur-queue-time'])
-        #
-        filtered_ap_trip['in-p-ratio'] = filtered_ap_trip.apply(lambda row:
-                                            (min(row[et_label], et_timestamp) - row[st_label]) / (row[et_label] - row[st_label]), axis=1)
-        filtered_ap_trip['in-fare'] = filtered_ap_trip[fare_label] * filtered_ap_trip['in-p-ratio']
-        filtered_ap_trip['out-fare'] = filtered_ap_trip[fare_label] * (1 - filtered_ap_trip['in-p-ratio'])
-        filtered_ap_trip['in-duration'] = filtered_ap_trip['duration'] * filtered_ap_trip['in-p-ratio']
-        filtered_ap_trip['out-duration'] = filtered_ap_trip['duration'] * (1 - filtered_ap_trip['in-p-ratio'])
-        #
-        ap_fare = sum(filtered_ap_trip['in-fare'])
-        next_ap_fare = sum(filtered_ap_trip['out-fare'])
-        ap_duration = sum(filtered_ap_trip['in-duration'])
-        next_ap_duration = sum(filtered_ap_trip['out-duration'])
+        prev_queue_time, cur_queue_time, ap_fare, next_ap_fare, ap_duration, next_ap_duration = 0, 0, 0, 0, 0, 0
+        if len(filtered_ap_trip) != 0 : 
+            #
+            q_limit_max_ex = filtered_ap_trip[(Q_LIMIT_MAX < filtered_ap_trip['queue-time'])]
+            q_limit_max_ex['join-queue-time'] = q_limit_max_ex[st_label] - Q_LIMIT_MAX
+            q_limit_max_ex['prev-queue-time'] = st_timestamp - q_limit_max_ex['join-queue-time'] 
+            q_limit_max_ex['cur-queue-time'] = q_limit_max_ex[st_label] - st_timestamp
+            prev_queue_time += sum(q_limit_max_ex['prev-queue-time'])
+            cur_queue_time += sum(q_limit_max_ex['cur-queue-time'])
+            #
+            q_normal = filtered_ap_trip[(Q_LIMIT_MIN <= filtered_ap_trip['queue-time']) & \
+                                       (filtered_ap_trip['queue-time'] <= Q_LIMIT_MAX)]
+            q_normal['prev-queue-time'] = st_timestamp - q_normal['join-queue-time'] 
+            q_normal['cur-queue-time'] = q_normal[st_label] - st_timestamp
+            prev_queue_time += sum(q_normal['prev-queue-time'])
+            cur_queue_time += sum(q_normal['cur-queue-time'])
+            #
+            filtered_ap_trip['in-p-ratio'] = filtered_ap_trip.apply(lambda row:
+                                                (min(row[et_label], et_timestamp) - row[st_label]) / (row[et_label] - row[st_label]), axis=1)
+            filtered_ap_trip['in-fare'] = filtered_ap_trip[fare_label] * filtered_ap_trip['in-p-ratio']
+            filtered_ap_trip['out-fare'] = filtered_ap_trip[fare_label] * (1 - filtered_ap_trip['in-p-ratio'])
+            filtered_ap_trip['in-duration'] = filtered_ap_trip['duration'] * filtered_ap_trip['in-p-ratio']
+            filtered_ap_trip['out-duration'] = filtered_ap_trip['duration'] * (1 - filtered_ap_trip['in-p-ratio'])
+            #
+            ap_fare += sum(filtered_ap_trip['in-fare'])
+            next_ap_fare += sum(filtered_ap_trip['out-fare'])
+            ap_duration += sum(filtered_ap_trip['in-duration'])
+            next_ap_duration += sum(filtered_ap_trip['out-duration'])
         #
         # prev
         p_yyyy, p_mm, p_dd, p_hh = prev_day_time.year, prev_day_time.month, prev_day_time.day, prev_day_time.hour
@@ -140,7 +141,7 @@ def process_files(yymm):
                 continue
             op_cost = ap_out_fare / ap_out_dur
             writer.writerow([
-                             yyyy-2000, mm, dd, hh,
+                             yyyy - 2000, mm, dd, hh,
                              total_dur, total_fare, ap_queue, ap_dur, ap_fare,
                              op_cost
                              ])
