@@ -4,11 +4,13 @@ import os, sys
 sys.path.append(os.getcwd() + '/..')
 #
 import csv, datetime, time
+from traceback import format_exc
 #
 from supports.etc_functions import get_all_files
 from supports._setting import aiport_trips_dir, op_cost_summary
 from supports._setting import Q_LIMIT_MIN, Q_LIMIT_MAX
 from supports.logger import logging_msg
+from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 #
 op_costs = {}
 with open(op_cost_summary) as r_csvfile:
@@ -24,6 +26,16 @@ with open(op_cost_summary) as r_csvfile:
 def run():
     csv_files = get_all_files(aiport_trips_dir, 'airport-trip-', '.csv')
     process_file(csv_files[0])
+    init_multiprocessor()
+    count_num_jobs = 0
+    for fn in csv_files:
+        try:
+            put_task(process_file, [fn])
+        except Exception as _:
+            logging_msg('Algorithm runtime exception (%s)\n' % (fn) + format_exc())
+            raise
+        count_num_jobs += 1
+    end_multiprocessor(count_num_jobs)
     
 def process_file(fn):
     _, _, yymm = fn[:-len('.csv')].split('-')
@@ -85,5 +97,8 @@ def process_file(fn):
                                 row[id_tm], row[id_pt_et],
                                 modi_jqt, qt,
                                 op_cost, economic_profit])
+    print 'end the file; %s' % yymm
+    logging_msg('end the file; %s' % yymm)
+    
 if __name__ == '__main__':
     run()
