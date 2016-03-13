@@ -18,8 +18,8 @@ SEC = 60
 Q_LIMIT_MIN, Q_LIMIT_MAX = 0, 3600
 #
 def run():
+    remove_creat_dir(op_costs_dir)
     process_files('1007')
-#     remove_creat_dir(op_costs_dir)
 #     init_multiprocessor()
 #     count_num_jobs = 0
 #     for y in xrange(9, 11):
