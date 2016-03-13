@@ -25,7 +25,6 @@ with open(op_cost_summary) as r_csvfile:
 #
 def run():
     csv_files = get_all_files(aiport_trips_dir, 'airport-trip-', '.csv')
-    process_file(csv_files[0])
     init_multiprocessor()
     count_num_jobs = 0
     for fn in csv_files:
