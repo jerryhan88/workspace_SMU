@@ -37,3 +37,5 @@ aiport_trips_dir = trips_dir + '/airport_trips'
 #
 op_costs_dir = prefix + '/op_costs'
 op_cost_summary = op_costs_dir + '/op-cost-summary.csv' 
+#
+individual_dir = prefix + '/individual-summary'
