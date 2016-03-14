@@ -20,21 +20,21 @@ SEC = 60
 #
 def run():
     remove_creat_dir(individual_dir)
-    process_files('1007')
-#     init_multiprocessor()
-#     count_num_jobs = 0
-#     for y in xrange(9, 11):
-#         for m in xrange(1, 13):
-#             try:
-#                 yymm = '%02d%02d' % (y, m) 
-#                 if yymm in ['0912', '1010']:
-#                     continue
-#                 put_task(process_files, [yymm])
-#             except Exception as _:
-#                 logging_msg('Algorithm runtime exception (%s)\n' % (yymm) + format_exc())
-#                 raise
-#             count_num_jobs += 1
-#     end_multiprocessor(count_num_jobs)
+#     process_files('1007')
+    init_multiprocessor()
+    count_num_jobs = 0
+    for y in xrange(9, 11):
+        for m in xrange(1, 13):
+            try:
+                yymm = '%02d%02d' % (y, m) 
+                if yymm in ['0912', '1010']:
+                    continue
+                put_task(process_files, [yymm])
+            except Exception as _:
+                logging_msg('Algorithm runtime exception (%s)\n' % (yymm) + format_exc())
+                raise
+            count_num_jobs += 1
+    end_multiprocessor(count_num_jobs)
 
 def process_files(yymm):
     print 'handle the file; %s' % yymm
