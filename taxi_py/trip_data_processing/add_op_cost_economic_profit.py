@@ -16,7 +16,6 @@ op_costs = {}
 with open(op_cost_summary) as r_csvfile:
     reader = csv.reader(r_csvfile)
     headers = reader.next()
-    header = ['yy', 'mm', 'dd', 'hh', 'total-duration', 'total-fare', 'ap-queue', 'ap-duration', 'ap-fare', 'op-cost-sec']
     id_yy, id_mm, id_dd, id_hh = headers.index('yy'), headers.index('mm'), headers.index('dd'), headers.index('hh')
     id_op_cost = headers.index('op-cost-sec')
     for row in reader:
@@ -71,24 +70,68 @@ def process_file(fn):
                 op_cost = 0
                 st_yyyy, st_mm, st_dd, st_hh = st_datetime.year, st_datetime.month, st_datetime.day, st_datetime.hour
                 if jqt_datetime.hour == st_datetime.hour:
-                    op_cost += qt * op_costs[(st_yyyy, st_mm, st_dd, st_hh)]
+                    try:
+                        op_cost_per_sec = op_costs[(st_yyyy, st_mm, st_dd, st_hh)]
+                    except KeyError:
+                        alternative_datetime = st_datetime - datetime.timedelta(hours=1)
+                        a_yyyy, a_mm, a_dd, a_hh = \
+                        alternative_datetime.year, alternative_datetime.month, alternative_datetime.day, alternative_datetime.hour
+                        op_cost_per_sec = op_costs[(a_yyyy, a_mm, a_dd, a_hh)]
+                    op_cost += qt * op_cost_per_sec
                 else:
                     tp = datetime.datetime(st_datetime.year, st_datetime.month, st_datetime.day, st_datetime.hour)
                     tp_timestamp = time.mktime(tp.timetuple())
                     p_jqt_st = (tp_timestamp - modi_jqt) / qt
                     prev_dt = st_datetime - datetime.timedelta(hours=1)
-                    op_cost += op_costs[(prev_dt.year, prev_dt.month, prev_dt.day, prev_dt.hour)] * qt * p_jqt_st
-                    op_cost += op_costs[(st_yyyy, st_mm, st_dd, st_hh)] * qt * (1 - p_jqt_st)
+                    try:
+                        op_cost_per_sec = op_costs[(prev_dt.year, prev_dt.month, prev_dt.day, prev_dt.hour)]
+                    except KeyError:
+                        alternative_datetime = prev_dt - datetime.timedelta(hours=1)
+                        a_yyyy, a_mm, a_dd, a_hh = \
+                        alternative_datetime.year, alternative_datetime.month, alternative_datetime.day, alternative_datetime.hour
+                        op_cost_per_sec = op_costs[(a_yyyy, a_mm, a_dd, a_hh)]
+                    op_cost += op_cost_per_sec * qt * p_jqt_st
+                    #
+                    try:
+                        op_cost_per_sec = op_costs[(st_yyyy, st_mm, st_dd, st_hh)]
+                    except KeyError:
+                        alternative_datetime = st_datetime - datetime.timedelta(hours=1)
+                        a_yyyy, a_mm, a_dd, a_hh = \
+                        alternative_datetime.year, alternative_datetime.month, alternative_datetime.day, alternative_datetime.hour
+                        op_cost_per_sec = op_costs[(a_yyyy, a_mm, a_dd, a_hh)]
+                    op_cost += op_cost_per_sec * qt * (1 - p_jqt_st)
                 if st_datetime.hour == et_datetime.hour:
-                    op_cost += dur * op_costs[(st_yyyy, st_mm, st_dd, st_hh)]
+                    try:
+                        op_cost_per_sec = op_costs[(st_yyyy, st_mm, st_dd, st_hh)]
+                    except KeyError:
+                        alternative_datetime = st_datetime - datetime.timedelta(hours=1)
+                        a_yyyy, a_mm, a_dd, a_hh = \
+                        alternative_datetime.year, alternative_datetime.month, alternative_datetime.day, alternative_datetime.hour
+                        op_cost_per_sec = op_costs[(a_yyyy, a_mm, a_dd, a_hh)]
+                    op_cost += dur * op_cost_per_sec
                 else:
                     # This part don't regards cases when duration is more than a hour
                     tp = datetime.datetime(et_datetime.year, et_datetime.month, et_datetime.day, et_datetime.hour)
                     tp_timestamp = time.mktime(tp.timetuple())
                     p_st_et = (tp_timestamp - st) / dur
                     next_dt = st_datetime + datetime.timedelta(hours=1)
-                    op_cost += op_costs[(st_yyyy, st_mm, st_dd, st_hh)] * qt * p_st_et
-                    op_cost += op_costs[(next_dt.year, next_dt.month, next_dt.day, next_dt.hour)] * qt * (1 - p_st_et)
+                    try:
+                        op_cost_per_sec = op_costs[(st_yyyy, st_mm, st_dd, st_hh)]
+                    except KeyError:
+                        alternative_datetime = st_datetime - datetime.timedelta(hours=1)
+                        a_yyyy, a_mm, a_dd, a_hh = \
+                        alternative_datetime.year, alternative_datetime.month, alternative_datetime.day, alternative_datetime.hour
+                        op_cost_per_sec = op_costs[(a_yyyy, a_mm, a_dd, a_hh)]
+                    op_cost += op_cost_per_sec * qt * p_st_et
+                    #
+                    try:
+                        op_cost_per_sec = op_costs[(next_dt.year, next_dt.month, next_dt.day, next_dt.hour)]
+                    except KeyError:
+                        alternative_datetime = next_dt - datetime.timedelta(hours=1)
+                        a_yyyy, a_mm, a_dd, a_hh = \
+                        alternative_datetime.year, alternative_datetime.month, alternative_datetime.day, alternative_datetime.hour
+                        op_cost_per_sec = op_costs[(a_yyyy, a_mm, a_dd, a_hh)]
+                    op_cost += op_cost_per_sec * qt * (1 - p_st_et)
                 economic_profit = fare - op_cost
                 #
                 writer.writerow([row[id_tid], row[id_vid], row[id_did],
