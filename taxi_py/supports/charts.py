@@ -36,6 +36,7 @@ class histograms(object):
         # [(_title, x_label, y_label, num_bin, x_data), (_title, x_label, y_label, num_bin, x_data)]
         # ] 
         _, axarr = plt.subplots(len(chart_info), len(chart_info[0]))
+        print axarr 
         for i, row in enumerate(chart_info):
             for j, (_title, x_label, y_label, num_bin, x_data) in enumerate(row):
                 ax = axarr[i+j]
@@ -113,11 +114,12 @@ class one_bar_chart(object):
         plt.show()
 
 class multiple_line_chart(object):
-    def __init__(self, _title, _ylabel, x_data, multi_y_data, legend_labels):
+    def __init__(self, _title, _xlabel, _ylabel, x_data, multi_y_data, legend_labels, legend_pos):
         assert len(multi_y_data) == len(legend_labels) 
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_title(_title)
+        ax.set_xlabel(_xlabel)
         ax.set_ylabel(_ylabel)
         ymax = 0
         for i, y_data in enumerate(multi_y_data):
@@ -125,9 +127,9 @@ class multiple_line_chart(object):
             ymax1 = max(y_data)
             if ymax < ymax1:
                 ymax = ymax1 
-        plt.legend(legend_labels, ncol=1, loc='upper left', fontsize=10)
+        plt.legend(legend_labels, ncol=1, loc=legend_pos, fontsize=10)
         
-        ax.set_xbound(lower=0 - 0.5, upper=len(multi_y_data[0]))
+        ax.set_xbound(lower=0, upper=x_data[-1])
         ax.set_ybound(upper=ymax * 1.05)
         
         plt.show()
