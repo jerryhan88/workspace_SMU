@@ -53,7 +53,7 @@ def process_file(fn):
         with open('%s/ap-trip-op-ep-%s.csv' % (aiport_trips_dir, yymm), 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile)
             new_headers = ['tid', 'vid', 'did', 'start-time', 'end-time', 'duration', 'fare', 'trip-mode', 'prev-trip-end-time', 'join-queue-time', 'queue-time',
-                           'op-cost', 'economic']
+                           'op-cost', 'economic', 'yy', 'mm', 'dd', 'hh']
             writer.writerow(new_headers)
             for row in reader:
                 jqt, st, et = eval(row[id_jqt]), eval(row[id_st]), eval(row[id_et])
@@ -95,7 +95,8 @@ def process_file(fn):
                                 st, et, dur, fare,
                                 row[id_tm], row[id_pt_et],
                                 modi_jqt, qt,
-                                op_cost, economic_profit])
+                                op_cost, economic_profit,
+                                st_yyyy, st_mm, st_dd, st_hh])
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
     
