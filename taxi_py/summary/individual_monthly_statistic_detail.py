@@ -56,7 +56,7 @@ def process_files(yymm):
         pro_dur = sum(did_sh['productive-duration']) * SEC
         did_wt = trip_df[(trip_df['did'] == did)]
         total_fare = sum(did_wt['fare'])
-        if pro_dur > 0 :
+        if pro_dur > 0 and total_fare != 0:
             total_prod = total_fare / pro_dur
             with open('%s/%s%s.csv' % (individual_detail_dir, general_prefix, yymm), 'a') as w_csvfile:
                 writer = csv.writer(w_csvfile)
@@ -71,7 +71,7 @@ def process_files(yymm):
             ap_qu, ap_dur = sum(prev_in_ap_trip['queue-time']), sum(prev_in_ap_trip['duration'])
             ap_fare = sum(prev_in_ap_trip['fare'])
             ap_op_cost, ap_eco_profit = sum(prev_in_ap_trip['op-cost']), sum(prev_in_ap_trip['economic'])
-            if ap_qu + ap_dur > 0 :
+            if ap_qu + ap_dur > 0 and ap_fare != 0:
                 ap_prod = ap_fare / (ap_qu + ap_dur)
                 with open('%s/%s%s.csv' % (individual_detail_dir, prev_in_ap_prefix, yymm), 'a') as w_csvfile:
                     writer = csv.writer(w_csvfile)
@@ -81,7 +81,7 @@ def process_files(yymm):
             ap_qu, ap_dur = sum(prev_out_ap_trip['queue-time']), sum(prev_out_ap_trip['duration'])
             ap_fare = sum(prev_out_ap_trip['fare'])
             ap_op_cost, ap_eco_profit = sum(prev_out_ap_trip['op-cost']), sum(prev_out_ap_trip['economic'])
-            if ap_qu + ap_dur > 0 :
+            if ap_qu + ap_dur > 0 and ap_fare != 0:
                 ap_prod = ap_fare / (ap_qu + ap_dur)
                 with open('%s/%s%s.csv' % (individual_detail_dir, prev_out_ap_prefix, yymm), 'a') as w_csvfile:
                     writer = csv.writer(w_csvfile)
