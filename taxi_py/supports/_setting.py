@@ -39,3 +39,4 @@ op_costs_dir = prefix + '/op_costs'
 op_cost_summary = op_costs_dir + '/op-cost-summary.csv' 
 #
 individual_dir = prefix + '/individual-summary'
+individual_detail_dir = prefix + '/individual-detail-summary'
