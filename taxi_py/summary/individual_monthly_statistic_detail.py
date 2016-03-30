@@ -94,7 +94,6 @@ def init_csv_files(yymm):
         writer = csv.writer(w_csvfile)
         headers = ['yy', 'mm', 'did', 'total-pro-dur', 'total-fare', 'total-prod']
         writer.writerow(headers)
-        prev_in_ap_prefix,
     #
     with open('%s/%s%s.csv' % (individual_detail_dir, prev_in_ap_prefix, yymm), 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile)
