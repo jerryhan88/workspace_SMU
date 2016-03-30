@@ -19,6 +19,7 @@ def run():
     count_num_jobs = 0
     for fn in csv_files:
         put_task(process_file, [fn])
+#         process_file(fn)
         count_num_jobs += 1
     end_multiprocessor(count_num_jobs)
         
@@ -45,7 +46,7 @@ def process_file(fn):
     #
     st_label = 'start-time'
     fare_label = 'fare'
-    tm = [DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP]
+    tms = [DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP]
     while cur_datetime != last_day_time:
         next_datetime = cur_datetime + datetime.timedelta(hours=1)
         cur_timestamp, next_timestamp = time.mktime(cur_datetime.timetuple()), time.mktime(next_datetime.timetuple())
@@ -56,7 +57,8 @@ def process_file(fn):
         dow, hh = cur_datetime.strftime("%a"), cur_datetime.hour 
         with open(new_fn, 'a') as csvFile:
             writer = csv.writer(csvFile)
-            for tm, totalNum, totalFare in zip(tm, list(tm_grouped.count()[fare_label]), list(tm_grouped.sum()[fare_label])):
+            tm_totalNum_totalFare = zip(tms, list(tm_grouped.count()[fare_label]), list(tm_grouped.sum()[fare_label]))
+            for tm, totalNum, totalFare in tm_totalNum_totalFare:
                 writer.writerow([yy, mm, dow, hh, tm, totalNum, totalFare])
         cur_datetime = next_datetime
     print 'end the file; %s' % yymm
