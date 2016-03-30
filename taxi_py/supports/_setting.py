@@ -33,7 +33,8 @@ logs_dir = prefix + '/logs'
 log_last_day_dir = logs_dir + '/logs_last_day'
 #
 trips_dir = prefix + '/trips'
-aiport_trips_dir = trips_dir + '/airport_trips' 
+aiport_trips_dir = trips_dir + '/airport_trips'
+for_learning_dir = trips_dir + '/for_learning'  
 #
 op_costs_dir = prefix + '/op_costs'
 op_cost_summary = op_costs_dir + '/op-cost-summary.csv' 

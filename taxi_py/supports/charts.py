@@ -17,6 +17,7 @@ clists = (
 
 class histogram(object):
     def __init__(self, _title, x_label, y_label, num_bin, x_data):
+        fig = plt.figure(figsize=(6, 6))
         _, bins, _ = plt.hist(x_data, 50, normed=1, facecolor='green', alpha=0.75)
         x_mean, x_std = np.mean(x_data), np.std(x_data)
         # add a 'best fit' line
@@ -114,9 +115,9 @@ class one_bar_chart(object):
         plt.show()
 
 class multiple_line_chart(object):
-    def __init__(self, _title, _xlabel, _ylabel, x_data, multi_y_data, legend_labels, legend_pos):
-        assert len(multi_y_data) == len(legend_labels) 
-        fig = plt.figure()
+    def __init__(self, _title, _xlabel, _ylabel, x_data, multi_y_data, legend_labels, legend_pos, _xticks=[]):
+        assert len(multi_y_data) == len(legend_labels)
+        fig = plt.figure(figsize=(12, 6))
         ax = fig.add_subplot(111)
         ax.set_title(_title)
         ax.set_xlabel(_xlabel)
@@ -127,23 +128,53 @@ class multiple_line_chart(object):
             ymax1 = max(y_data)
             if ymax < ymax1:
                 ymax = ymax1 
-        plt.legend(legend_labels, ncol=1, loc=legend_pos, fontsize=10)
         
+#         xtickNames = ax.set_xticklabels(_xticks)
+        plt.xticks(x_data, _xticks, rotation=30)
+        
+#         xtickNames = plt.xticks(x_data, _xticks)
+#         plt.setp(xtickNames, rotation=25, fontsize=10)
+        plt.legend(legend_labels, ncol=1, loc=legend_pos, fontsize=10)
         ax.set_xbound(lower=0, upper=x_data[-1])
         ax.set_ybound(upper=ymax * 1.05)
         
         plt.show()
 
+class bar_table(object):
+    def __init__(self, _title, _ylabel, row_labels, col_labels, table_data):
+        assert len(table_data) == len(row_labels)
+        assert len(table_data[0]) == len(col_labels)
+        #
+        index, bar_width = np.arange(len(col_labels)) + 0.3, 0.4
+        #
+        bar_data = table_data[:]
+        bar_data.reverse()
+        y_offset = np.array([0.0] * len(col_labels))
+        for i, row_data in enumerate(bar_data):
+            plt.bar(index, row_data, bar_width, bottom=y_offset, color=clists[i])
+            y_offset = y_offset + row_data
+#         cell_text.reverse()
+#         row_labels.reverse()
+        #
+        table = plt.table(cellText=table_data, colLabels=col_labels, rowLabels=row_labels, loc='bottom')
+        table.scale(1, 2)
+        #
+        plt.subplots_adjust(left=0.2, bottom=0.2)
+        plt.ylabel(_ylabel)
+        plt.xticks([])
+        plt.title(_title)
+        plt.show()
+
 def test():
-#     labels = ['PInAP | DInAP', 'POutAP | DInAP']
-#     data_2009 = [0.2483495724173474, 0.75165042758265266]
-#     data_2010 = [0.30647775676350764, 0.69352224323649236]
-#     two_pie_chart(labels, "Drivers' decision in 2009", data_2009, "Drivers' decision in 2010", data_2010)
-    import random
-#     histogram('test', 'test', 'test', 50, [random.random() for _ in xrange(10000)])
+#     _xticks = ['0901', '0902', '0903', '0904', '0905', '0906', '0907', '0908', '0909', '0910', '0911', '1001', '1002', '1003', '1004', '1005', '1006', '1007', '1008', '1009', '1011', '1012'] 
+#     multi_y_data = [[0.67635201228038688, 0.701050888316745, 0.66084240390978122, 0.65022445963619491, 0.64389675477843911, 0.66446136896636077, 0.63970548026605123, 0.66264901079546956, 0.71122657414666435, 0.68196171545278039, 0.66778103715483994, 0.66645472088965307, 0.77031418724961354, 0.70967712712012176, 0.72621150500366061, 0.70573424978336496, 0.72104493110684764, 0.71686910585881769, 0.73506509548629695, 0.74608701714712922, 0.72765325055878005, 0.69799623445198877], [0.62281952926979178, 0.64994921475140077, 0.64245864641897543, 0.62093270275139034, 0.60998069599320515, 0.63685663554035121, 0.59950742051005435, 0.62807663503311439, 0.67665595563848002, 0.65691655100276258, 0.63350297404335509, 0.63354886905649876, 0.73769631165216809, 0.69010429756449398, 0.69883330776666552, 0.6750773528391254, 0.71623210955924899, 0.70178444283012997, 0.7103634031797581, 0.72451101298465392, 0.71816134205083848, 0.68908767880702615]]
+#     
+#     multiple_line_chart('_title', '_xlabel', '_ylabel', range(len(_xticks)), multi_y_data, ['prev_in','prev_out'], 'upper left', _xticks) 
+#     
+    _data = [[834039, 1207006], [2520670, 2730197]]
+    row_labels, col_labels = ['Pick up in AP', 'Pick up out AP'], ['# of trips in Y2009', '# of trips in Y2010']
     
-    histograms([[('test', 'test', 'test', 50, [random.random() for _ in xrange(10000)]), ('test', 'test', 'test', 50, [random.random() for _ in xrange(10000)])]])
-    
+    bar_table('Airport trips', 'Number of trips', row_labels, col_labels, _data)
     
 if __name__ == '__main__':
     test()
