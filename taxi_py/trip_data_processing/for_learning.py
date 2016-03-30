@@ -40,17 +40,22 @@ def process_file(fn):
             new_headers = ['tid', 'trip-mode',
                            'prev-trip-end-time', 'start-time',
                            'day-of-week', 'hh',
-                           'setup-time', 'duration', 'fare']
+                           'setup-time', 'duration',
+                           'setup-time_HOUR', 'duration_HOUR', 
+                           'fare']
             writer.writerow(new_headers)
             for row in reader:
                 st = eval(row[id_st]) 
                 st_datetime = datetime.datetime.fromtimestamp(st)
                 prev_tet = eval(row[id_prev_tet])
-                setup_time_hour = int(math.ceil((st - prev_tet) / HOUR))
-                duration_hour = int(math.ceil(eval(row[id_duration])/ HOUR))
+                setup_time = st - prev_tet
+                setup_time_hour = int(math.ceil(setup_time / HOUR))
+                duration = eval(row[id_duration])
+                duration_hour = int(math.ceil(duration/ HOUR))
                 writer.writerow([row[id_tid], row[id_tm],
                                 prev_tet, st,
                                 st_datetime.strftime("%a"), st_datetime.hour,
+                                setup_time, duration,
                                 setup_time_hour, duration_hour, row[id_fare]])
     print 'end the file; %s' % yymm 
     logging_msg('end the file; %s' % yymm)
