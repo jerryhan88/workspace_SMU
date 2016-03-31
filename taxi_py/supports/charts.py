@@ -3,6 +3,8 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
+from matplotlib.path import Path
+import matplotlib.patches as patches
 
 _rgb = lambda r, g, b: (r / 255, g / 255, b / 255)
 
@@ -17,7 +19,7 @@ clists = (
 
 class histogram(object):
     def __init__(self, _title, x_label, y_label, num_bin, x_data):
-        fig = plt.figure(figsize=(6, 6))
+        plt.figure(figsize=(6, 6))
         _, bins, _ = plt.hist(x_data, 50, normed=1, facecolor='green', alpha=0.75)
         x_mean, x_std = np.mean(x_data), np.std(x_data)
         # add a 'best fit' line
@@ -36,11 +38,11 @@ class histograms(object):
         # [(_title, x_label, y_label, num_bin, x_data), (_title, x_label, y_label, num_bin, x_data)],
         # [(_title, x_label, y_label, num_bin, x_data), (_title, x_label, y_label, num_bin, x_data)]
         # ] 
+        plt.figure(figsize=(12, 6))
         _, axarr = plt.subplots(len(chart_info), len(chart_info[0]))
-        print axarr 
         for i, row in enumerate(chart_info):
             for j, (_title, x_label, y_label, num_bin, x_data) in enumerate(row):
-                ax = axarr[i+j]
+                ax = axarr[i + j]
                 _, bins, _ = ax.hist(x_data, num_bin, normed=1, facecolor='green', alpha=0.75)
                 x_mean, x_std = np.mean(x_data), np.std(x_data)
                 # add a 'best fit' line
@@ -164,6 +166,65 @@ class bar_table(object):
         plt.xticks([])
         plt.title(_title)
         plt.show()
+
+class grid_charts(object):
+    UNIT = 1.0
+    HALF_UNIT = UNIT / 2
+    codes = [Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY]
+    FIG_SIZE_UNIT = 6
+    def __init__(self, x_axis_info, y_axis_info, _legends, titles, _data, fn=None):
+        _xlabel, _xticks = x_axis_info
+        _ylabel, _yticks = y_axis_info
+        num_charts = len(_data)
+        #
+        fig = plt.figure(figsize=(grid_charts.FIG_SIZE_UNIT * num_charts, grid_charts.FIG_SIZE_UNIT))
+        
+        if fn:
+            # TODO save it !!
+            for i, points_color in enumerate(_data):
+                self.draw_a_chart(fig, num_charts, i, _legends, _xlabel, _ylabel, _xticks, _yticks, points_color)
+            plt.savefig(fn)
+        else:
+            for i, points_color in enumerate(_data):
+                self.draw_a_chart(fig, num_charts, i, _legends, _xlabel, _ylabel, _xticks, _yticks, points_color, titles[i])
+        plt.show()
+        
+    def draw_a_chart(self, fig, num_charts, _th, _legends, _xlabel, _ylabel, _xticks, _yticks, points_color, title=None):
+        paths, color_choices = [], []
+        for x, y, c in points_color:
+            verts = self.gen_rect_coord_by_center(x, y)
+            paths.append(Path(verts, grid_charts.codes))
+            color_choices.append(c)
+        colors_set = set(color_choices)
+        labeled = [False for _ in xrange(len(colors_set))]
+        ax = fig.add_subplot(1, num_charts, _th + 1)
+        for i, path in enumerate(paths):
+            if not labeled[color_choices[i]]:
+                patch = patches.PathPatch(path, facecolor=clists[color_choices[i]], label='%s' % _legends[color_choices[i]])
+                labeled[color_choices[i]] = True
+            else:
+                patch = patches.PathPatch(path, facecolor=clists[color_choices[i]])
+            ax.add_patch(patch)
+        xs, ys, _ = zip(*points_color)
+        ax.set_xlim(min(xs) - grid_charts.HALF_UNIT, max(xs) + grid_charts.HALF_UNIT)
+        ax.set_ylim(min(ys) - grid_charts.HALF_UNIT, max(ys) + grid_charts.HALF_UNIT)
+        #
+        if title: plt.text(0.5, 1.08, title, horizontalalignment='center', transform = ax.transAxes)
+        if _xlabel: plt.xlabel(_xlabel)
+        if _ylabel: plt.ylabel(_ylabel)
+        if _xticks: plt.xticks(_xticks)
+        if _yticks: plt.yticks(range(len(_yticks)), _yticks)
+        plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+           ncol=2, mode="expand", borderaxespad=0., framealpha=0.0)
+        
+                
+    def gen_rect_coord_by_center(self, x, y):
+        left_bottom = (x - grid_charts.HALF_UNIT, y - grid_charts.HALF_UNIT) 
+        left_top = (x - grid_charts.HALF_UNIT, y + grid_charts.HALF_UNIT)
+        right_top = (x + grid_charts.HALF_UNIT, y + grid_charts.HALF_UNIT)
+        right_bottom = (x + grid_charts.HALF_UNIT, y - grid_charts.HALF_UNIT)
+        ignored = left_bottom
+        return [left_bottom, left_top  , right_top , right_bottom, ignored]
 
 def test():
 #     _xticks = ['0901', '0902', '0903', '0904', '0905', '0906', '0907', '0908', '0909', '0910', '0911', '1001', '1002', '1003', '1004', '1005', '1006', '1007', '1008', '1009', '1011', '1012'] 

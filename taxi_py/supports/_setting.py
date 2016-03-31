@@ -42,3 +42,8 @@ op_cost_summary = op_costs_dir + '/op-cost-summary.csv'
 #
 individual_dir = prefix + '/individual-summary'
 individual_detail_dir = prefix + '/individual-detail-summary'
+#
+# For Q-learning
+IN_AIRPORT, OUT_AIRPORT = range(2)
+DAY_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+TIME_SLOTS = range(24)
