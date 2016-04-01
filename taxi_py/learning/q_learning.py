@@ -92,14 +92,14 @@ def process_files(yymm):
                 state_prodSum_num[(s1_new, s2_new, OUT_AIRPORT)][0] += prod
                 state_prodSum_num[(s1_new, s2_new, OUT_AIRPORT)][1] += 1
             #
-            if tm == DInAP_PInAP or tm == DOutAP_POutAP:
-                setup_cost = 0
-            elif tm == DInAP_POutAP:
+#             if tm == DInAP_PInAP or tm == DOutAP_POutAP:
+#                 setup_cost = 0
+            if tm == DInAP_PInAP or tm == DInAP_POutAP:
                 if state_prodSum_num[(s1, s2, IN_AIRPORT)][1] == 0:
                     setup_cost = 0
                 else:
                     setup_cost = setup_time * state_prodSum_num[(s1, s2, IN_AIRPORT)][0] / state_prodSum_num[(s1, s2, IN_AIRPORT)][1]
-            elif tm == DOutAP_PInAP:
+            elif tm == DOutAP_POutAP or tm == DOutAP_PInAP:
                 if state_prodSum_num[(s1, s2, OUT_AIRPORT)][1] ==0:
                     setup_cost = 0
                 else:
