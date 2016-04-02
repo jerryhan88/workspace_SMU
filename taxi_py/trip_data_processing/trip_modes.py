@@ -20,11 +20,12 @@ def run():
     remove_creat_dir(trips_dir)
     csv_files = get_all_files(merged_trip_dir, 'trips', '.csv')
     
-#     init_multiprocessor()
+    init_multiprocessor()
     counter = 0
     for fn in csv_files:
-        process_file(fn)
-#     end_multiprocessor(counter)
+        counter += 1
+        put_task(process_file, [fn])
+    end_multiprocessor(counter)
 
 def process_file(fn):
     _, yymm = fn[:-len('.csv')].split('-')
