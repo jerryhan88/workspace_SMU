@@ -63,7 +63,7 @@ def process_files(yymm):
         id_dur, id_fare = headers.index('duration'), headers.index('fare')
         for row in reader:
             setup_time = eval(row[id_setup_time])
-            if setup_time < 0 or setup_time > HOUR:
+            if setup_time < 0 or setup_time > HOUR / 2:
                 continue
             #
             prev_datetime = datetime.datetime.fromtimestamp(eval(row[id_prev_tet])) 
@@ -122,5 +122,6 @@ def process_files(yymm):
                 save_pickle_file('%s/q-value-prods-%s.pkl' % (for_learning_dir, yymm), [Qsa_value, state_prodSum_num])
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
+
 if __name__ == '__main__':
     run()
