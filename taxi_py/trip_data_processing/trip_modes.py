@@ -5,7 +5,7 @@ sys.path.append(os.getcwd() + '/..')
 #
 import csv
 #
-from supports._setting import trips_dir
+from supports._setting import merged_trip_dir, trips_dir
 from supports._setting import DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP
 from supports._setting import DInNS_PInNS, DInNS_POutNS, DOutNS_PInNS, DOutNS_POutNS
 from supports._setting import IN_NS, OUT_NS
@@ -14,8 +14,6 @@ from supports.location_check import check_terminal_num, is_in_night_safari
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 from supports.logger import logging_msg
 
-# merged_trip_dir = '/home/ckhan/taxi'
-merged_trip_dir = '/Users/JerryHan88/taxi/trips_merged'
 def run():
     remove_creat_dir(trips_dir)
     csv_files = get_all_files(merged_trip_dir, 'trips', '.csv')

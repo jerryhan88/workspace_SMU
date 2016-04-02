@@ -22,6 +22,10 @@ else:
     # TODO
     assert False, 'Windows?'
 assert prefix
+
+
+
+
 #
 ap_poly_info = '../airport_polygons'
 IN_AP, OUT_AP = 'O', 'X'
@@ -39,10 +43,12 @@ full_shift_dir = shifts_dir + '/full_time_drivers'
 logs_dir = prefix + '/logs'
 log_last_day_dir = logs_dir + '/logs_last_day'
 #
+
+merged_trip_dir = prefix + '/trips_merged'
 trips_dir = prefix + '/trips'
 aiport_trips_dir = trips_dir + '/airport_trips'
 for_learning_dir = trips_dir + '/for_learning'
-hourly_summary =  trips_dir + '/hourly_summary'
+hourly_summary = trips_dir + '/hourly_summary'
 #
 op_costs_dir = prefix + '/op_costs'
 op_cost_summary = op_costs_dir + '/op-cost-summary.csv' 
