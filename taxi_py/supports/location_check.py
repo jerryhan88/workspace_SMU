@@ -1,10 +1,9 @@
 from __future__ import division
 #
 from shapely.geometry import Polygon, Point
-
-ap_poly_info = '../airport_polygons'
-IN_AP, OUT_AP = 'O', 'X'
-
+from _setting import ap_poly_info, IN_AP, OUT_AP
+from _setting import ns_poly_info, IN_NS, OUT_NS
+#
 class terminal_poly(Polygon):
     def __init__(self, tid, points):
         Polygon.__init__(self, points)
@@ -12,7 +11,7 @@ class terminal_poly(Polygon):
     def __repr__(self):
         return self.tid
 
-# generate a airport's polygon and terminal polygones
+# generate airport's polygon and terminal polygones
 ap_poly = None
 term_polys = []
 with open(ap_poly_info, 'r') as f:
@@ -29,6 +28,16 @@ for l in ls:
         tn = eval(t.split('-')[1])
         term_polys.append(terminal_poly(tn, points))
 
+# generate a polygon of night safari
+ns_poly = None
+with open(ns_poly_info, 'r') as f:
+    ls = [w.strip() for w in f.readlines()]
+points = []
+for l in ls:
+    _long, _lat = l.split(',')
+    points.append([eval(_long), eval(_lat)])
+ns_poly = Polygon(points)
+#
 def check_terminal_num(_long, _lat):
     '''
     tn: the terminal number
@@ -42,6 +51,16 @@ def check_terminal_num(_long, _lat):
             break
     del p
     return tn
+
+def is_in_night_safari(_long, _lat):
+    '''
+    if the location in night safari's polygon, return O
+    otherwise, return X 
+    '''
+    p = Point(_long, _lat)
+    rv = IN_NS if p.within(ns_poly) else OUT_NS
+    del p
+    return rv
     
 def is_in_airport(_long, _lat):
     '''

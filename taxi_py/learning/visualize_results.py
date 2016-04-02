@@ -9,14 +9,22 @@ from supports.handling_pkl import load_picle_file
 from supports.charts import grid_charts
 #
 
+day_of_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+id_dow = {dow : i for i, dow in enumerate(day_of_week)}
+time_slots = range(24)
+locations = [IN_AIRPORT, OUT_AIRPORT]
 
 def run():
-    Qsa_value, state_prodSum_num = load_picle_file('%s/q_value_prods.pkl' % (for_learning_dir))
+    process_files('0901')
+#     for y in xrange(9, 11):
+#         for m in xrange(1, 13):
+#             yymm = '%02d%02d' % (y, m) 
+#             if yymm in ['0912', '1010']:
+#                 continue
+#             process_files(yymm)
     
-    day_of_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    id_dow = {dow : i for i, dow in enumerate(day_of_week)}
-    time_slots = range(24)
-    locations = [IN_AIRPORT, OUT_AIRPORT]
+def process_files(yymm):
+    Qsa_value, _ = load_picle_file('%s/q-value-prods-%s.pkl' % (for_learning_dir, yymm))
     decision_inAP, decision_outAP = [], []
     for s1 in day_of_week:
         for s2 in time_slots:
@@ -35,7 +43,8 @@ def run():
              [(s2, id_dow[s1], a) for s1, s2, a in decision_outAP]
              ]
     titles = ['Decision in the airport', 'Decision outside of the airport']
-    grid_charts(('24 Time slots', []), ('', day_of_week), ['In Airport', 'Out Airport'], titles, _data, 'test.pdf')
+    grid_charts(('24 Time slots', []), ('', day_of_week), ['In Airport', 'Out Airport'], titles, _data, '%s/q-value-prods-%s.pdf' % (for_learning_dir, yymm))
+    
     
 if __name__ == '__main__':
     run()

@@ -187,7 +187,7 @@ class grid_charts(object):
         else:
             for i, points_color in enumerate(_data):
                 self.draw_a_chart(fig, num_charts, i, _legends, _xlabel, _ylabel, _xticks, _yticks, points_color, titles[i])
-        plt.show()
+            plt.show()
         
     def draw_a_chart(self, fig, num_charts, _th, _legends, _xlabel, _ylabel, _xticks, _yticks, points_color, title=None):
         paths, color_choices = [], []
@@ -196,6 +196,7 @@ class grid_charts(object):
             paths.append(Path(verts, grid_charts.codes))
             color_choices.append(c)
         colors_set = set(color_choices)
+        print colors_set
         labeled = [False for _ in xrange(len(colors_set))]
         ax = fig.add_subplot(1, num_charts, _th + 1)
         for i, path in enumerate(paths):

@@ -23,7 +23,14 @@ else:
     assert False, 'Windows?'
 assert prefix
 #
+ap_poly_info = '../airport_polygons'
+IN_AP, OUT_AP = 'O', 'X'
+ns_poly_info = '../night_safari_polygon'
+IN_NS, OUT_NS = 'O', 'X'
+#
 DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP = range(4)
+DInNS_PInNS, DInNS_POutNS, DOutNS_PInNS, DOutNS_POutNS = range(4)
+#
 Q_LIMIT_MIN, Q_LIMIT_MAX = 0, 3600
 #
 shifts_dir = prefix + '/shifts'

@@ -14,8 +14,8 @@ import csv, datetime
 #
 MOD_STAN = 100000
 HOUR = 60 * 60
-ALPHA = 0.99
-GAMMA = 0.3
+ALPHA = 0.4
+GAMMA = 0.2
 #
 def run():
     for y in xrange(9, 11):

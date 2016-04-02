@@ -11,7 +11,7 @@ from supports.etc_functions import get_all_files
 from supports.handling_pkl import save_pickle_file
 from supports.logger import logging_msg
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
-from supports.location_check import IN_AP, OUT_AP
+from supports._setting import IN_AP, OUT_AP
 
 def run():
     csv_files = get_all_files(logs_dir, '', '.csv')
