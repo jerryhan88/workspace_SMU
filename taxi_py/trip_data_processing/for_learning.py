@@ -3,60 +3,69 @@ from __future__ import division
 import os, sys  
 sys.path.append(os.getcwd() + '/..')
 #
-import csv, datetime, math
+import csv
 #
-from supports._setting import trips_dir, for_learning_dir
-from supports.etc_functions import get_all_files, remove_creat_dir 
+from supports.etc_functions import get_all_files, remove_creat_dir
+from supports._setting import merged_trip_dir, for_learning_dir
+from supports.location_check import is_in_airport
+from supports._setting import OUT_AP
+ 
 from supports.logger import logging_msg
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 
-HOUR = 60 * 60
-
 def run():
     remove_creat_dir(for_learning_dir)
-    csv_files = get_all_files(trips_dir, 'whole-trip-', '.csv')
+    csv_files = get_all_files(merged_trip_dir, 'trips', '.csv')
     #
     init_multiprocessor()
     count_num_jobs = 0
     for fn in csv_files:
+#         process_file(fn)
         put_task(process_file, [fn])
         count_num_jobs += 1
     end_multiprocessor(count_num_jobs)    
     
 def process_file(fn):
-    _, _, yymm = fn[:-len('.csv')].split('-')
+    _, yymm = fn[:-len('.csv')].split('-')
     print 'handle the file; %s' % yymm 
     logging_msg('handle the file; %s' % yymm)
-    
-    with open('%s/%s' % (trips_dir, fn), 'rb') as r_csvfile:
+    with open('%s/%s' % (merged_trip_dir, fn), 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
-        id_tid = headers.index('tid')
-        id_st, id_duration = headers.index('start-time'), headers.index('duration') 
-        id_fare, id_tm, id_prev_tet = headers.index('fare'), headers.index('trip-mode'), headers.index('prev-trip-end-time')
         #
-        with open('%s/trip-for-learning-%s.csv' % (for_learning_dir, yymm), 'wt') as w_csvfile:
+        id_vid = headers.index('vehicle-id')
+        id_st, id_et = headers.index('start-time'), headers.index('end-time')
+        id_dur, id_fare = headers.index('duration'), headers.index('fare')
+        id_s_long, id_s_lat = headers.index('start-long'), headers.index('start-lat')
+        id_e_long, id_e_lat = headers.index('end-long'), headers.index('end-lat')
+        #
+        vehicle_prev_trip_position_time = {}
+        with open('%s/whole-trip-%s.csv' % (for_learning_dir, yymm), 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile)
-            new_headers = ['tid', 'trip-mode',
-                           'prev-trip-end-time', 'start-time',
-                           'day-of-week', 'hh',
-                           'setup-time', 'duration',
-                           'setup-time_HOUR', 'duration_HOUR', 
-                           'fare']
+            new_headers = ['prev-trip-end-time', 'prev-trip-end-location', 'start-time', 'start-location', 'end-time', 'end-location', 'duration', 'fare']
             writer.writerow(new_headers)
             for row in reader:
-                st = eval(row[id_st]) 
-                st_datetime = datetime.datetime.fromtimestamp(st)
-                prev_tet = eval(row[id_prev_tet])
-                setup_time = st - prev_tet
-                setup_time_hour = int(math.ceil(setup_time / HOUR))
-                duration = eval(row[id_duration])
-                duration_hour = int(math.ceil(duration/ HOUR))
-                writer.writerow([row[id_tid], row[id_tm],
-                                prev_tet, st,
-                                st_datetime.strftime("%a"), st_datetime.hour,
-                                setup_time, duration,
-                                setup_time_hour, duration_hour, row[id_fare]])
+                vid = row[id_vid]
+                start_time, end_time = eval(row[id_st]), eval(row[id_et]),
+                s_long, s_lat = eval(row[id_s_long]), eval(row[id_s_lat])
+                e_long, e_lat = eval(row[id_e_long]), eval(row[id_e_lat])
+                s_location, e_location = is_in_airport(s_long, s_lat), is_in_airport(e_long, e_lat)
+                #
+                if not vehicle_prev_trip_position_time.has_key(vid):
+                    # ASSUMPTION
+                    # If this trip is the driver's first trip in a month,
+                    # let's assume that the previous trip occurred out of the airport
+                    # and also assume that the previous trip's end time is the current trip's start time 
+                    vehicle_prev_trip_position_time[vid] = (OUT_AP, start_time)
+                prev_trip_end_location, prev_trip_end_time = vehicle_prev_trip_position_time[vid]
+                #
+                new_row = [prev_trip_end_location, prev_trip_end_time,
+                           start_time, s_location,
+                           end_time, e_location,
+                           row[id_dur], row[id_fare]]
+                writer.writerow(new_row)
+                #
+                vehicle_prev_trip_position_time[vid] = (e_location, end_time)
     print 'end the file; %s' % yymm 
     logging_msg('end the file; %s' % yymm)
         
