@@ -86,7 +86,6 @@ def process_files(yymm):
         tm_fare_df = gp_f_trip.sum()[fare_label].to_frame('total_tm_fare').reset_index()
         for tm, fare in tm_fare_df.values:
             tm_num_totalDuration_totalFare[tm][3] += fare
-        tm_num_totalDuration_totalFare = zip(ns_tm, list(gp_f_trip.count()[fare_label]), list(gp_f_trip.sum()[dur_lable]), list(gp_f_trip.sum()[fare_label]))
         save_as_csv(ns_fn, yymm, dd, hh, tm_num_totalDuration_totalFare)
         #
         cur_day_time = next_day_time
