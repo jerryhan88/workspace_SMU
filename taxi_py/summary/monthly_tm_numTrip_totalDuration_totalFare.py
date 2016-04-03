@@ -18,12 +18,12 @@ ns_fn = '%s/whole-ns-tm-num-dur-fare.csv' % (trips_dir)
 def run():
     with open(ap_fn, 'wt') as csvFile:
         writer = csv.writer(csvFile)
-        header = ['yy', 'mm', 'ap-trip-mode', 'num-tm', 'total-dur', 'total-fare']
+        header = ['yy', 'mm', 'dd', 'hh', 'ap-trip-mode', 'num-tm', 'total-dur', 'total-fare']
         writer.writerow(header)
     
     with open(ns_fn, 'wt') as csvFile:
         writer = csv.writer(csvFile)
-        header = ['yy', 'mm', 'ns-trip-mode', 'num-tm', 'total-dur', 'total-fare']
+        header = ['yy', 'mm', 'dd', 'hh', 'ns-trip-mode', 'num-tm', 'total-dur', 'total-fare']
         writer.writerow(header)
     
     for y in xrange(9, 11):
