@@ -63,11 +63,29 @@ def process_files(yymm):
         filtered_trip = trip_df[(st_timestamp <= trip_df[st_label]) & (trip_df[st_label] < et_timestamp)]
         #
         gp_f_trip = filtered_trip.groupby([ap_tm_lable])
-        tm_num_totalDuration_totalFare = zip(ap_tm, list(gp_f_trip.count()[fare_label]), list(gp_f_trip.sum()[dur_lable]), list(gp_f_trip.sum()[fare_label]))
+        tm_num_totalDuration_totalFare = [[tm, 0, 0, 0] for tm in ap_tm]
+        tm_num_df = gp_f_trip.count()[fare_label].to_frame('total_tm_num').reset_index()
+        for tm, num in tm_num_df.values:
+            tm_num_totalDuration_totalFare[tm][1] += num
+        tm_dur_df = gp_f_trip.count()[dur_lable].to_frame('total_tm_dur').reset_index()
+        for tm, dur in tm_dur_df.values:
+            tm_num_totalDuration_totalFare[tm][2] += dur
+        tm_fare_df = gp_f_trip.count()[fare_label].to_frame('total_tm_fare').reset_index()
+        for tm, fare in tm_fare_df.values:
+            tm_num_totalDuration_totalFare[tm][3] += fare
         save_as_csv(ap_fn, yymm, dd, hh, tm_num_totalDuration_totalFare)
         #
         gp_f_trip = filtered_trip.groupby([ns_tm_lable])
-        tm_num_totalDuration_totalFare = zip(ns_tm, list(gp_f_trip.count()[fare_label]), list(gp_f_trip.sum()[dur_lable]), list(gp_f_trip.sum()[fare_label]))
+        tm_num_totalDuration_totalFare = [[tm, 0, 0, 0] for tm in ns_tm]
+        tm_num_df = gp_f_trip.count()[fare_label].to_frame('total_tm_num').reset_index()
+        for tm, num in tm_num_df.values:
+            tm_num_totalDuration_totalFare[tm][1] += num
+        tm_dur_df = gp_f_trip.count()[dur_lable].to_frame('total_tm_dur').reset_index()
+        for tm, dur in tm_dur_df.values:
+            tm_num_totalDuration_totalFare[tm][2] += dur
+        tm_fare_df = gp_f_trip.count()[fare_label].to_frame('total_tm_fare').reset_index()
+        for tm, fare in tm_fare_df.values:
+            tm_num_totalDuration_totalFare[tm][3] += fare
         save_as_csv(ns_fn, yymm, dd, hh, tm_num_totalDuration_totalFare)
         #
         cur_day_time = next_day_time
