@@ -64,22 +64,22 @@ def process_files(yymm):
         #
         gp_f_trip = filtered_trip.groupby([ap_tm_lable])
         tm_num_totalDuration_totalFare = zip(ap_tm, list(gp_f_trip.count()[fare_label]), list(gp_f_trip.sum()[dur_lable]), list(gp_f_trip.sum()[fare_label]))
-        save_as_csv(ap_fn, yymm, tm_num_totalDuration_totalFare)
+        save_as_csv(ap_fn, yymm, dd, hh, tm_num_totalDuration_totalFare)
         #
         gp_f_trip = filtered_trip.groupby([ns_tm_lable])
         tm_num_totalDuration_totalFare = zip(ns_tm, list(gp_f_trip.count()[fare_label]), list(gp_f_trip.sum()[dur_lable]), list(gp_f_trip.sum()[fare_label]))
-        save_as_csv(ns_fn, yymm, tm_num_totalDuration_totalFare)
+        save_as_csv(ns_fn, yymm, dd, hh, tm_num_totalDuration_totalFare)
+        #
         cur_day_time = next_day_time
-        
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
 
-def save_as_csv(fn, yymm, _data):
+def save_as_csv(fn, yymm, dd, hh, _data):
     yy, mm = yymm[:2], yymm[2:]
     with open(fn, 'a') as csvFile:
         writer = csv.writer(csvFile)
         for tm, num, totalDur, totalFare in _data:
-            writer.writerow([yy, mm, tm, num, totalDur, totalFare])
+            writer.writerow([yy, mm, dd, hh, tm, num, totalDur, totalFare])
 
 if __name__ == '__main__':
     run()    
