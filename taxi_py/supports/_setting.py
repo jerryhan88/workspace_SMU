@@ -46,8 +46,8 @@ log_last_day_dir = logs_dir + '/logs_last_day'
 
 merged_trip_dir = prefix + '/trips_merged'
 trips_dir = prefix + '/trips'
+for_learning_dir = prefix + '/for_learning'
 aiport_trips_dir = trips_dir + '/airport_trips'
-for_learning_dir = trips_dir + '/for_learning'
 hourly_summary = trips_dir + '/hourly_summary'
 #
 op_costs_dir = prefix + '/op_costs'
