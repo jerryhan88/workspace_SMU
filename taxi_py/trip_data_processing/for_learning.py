@@ -59,7 +59,7 @@ def process_file(fn):
                     vehicle_prev_trip_position_time[vid] = (OUT_AP, start_time)
                 prev_trip_end_location, prev_trip_end_time = vehicle_prev_trip_position_time[vid]
                 #
-                new_row = [prev_trip_end_location, prev_trip_end_time,
+                new_row = [prev_trip_end_time, prev_trip_end_location, 
                            start_time, s_location,
                            end_time, e_location,
                            row[id_dur], row[id_fare]]

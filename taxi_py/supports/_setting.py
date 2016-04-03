@@ -36,6 +36,7 @@ DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP = range(4)
 DInNS_PInNS, DInNS_POutNS, DOutNS_PInNS, DOutNS_POutNS = range(4)
 #
 Q_LIMIT_MIN, Q_LIMIT_MAX = 0, 3600
+HOUR = 60 * 60
 #
 shifts_dir = prefix + '/shifts'
 full_shift_dir = shifts_dir + '/full_time_drivers' 
