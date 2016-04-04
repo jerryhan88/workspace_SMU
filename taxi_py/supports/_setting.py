@@ -22,10 +22,6 @@ else:
     # TODO
     assert False, 'Windows?'
 assert prefix
-
-
-
-
 #
 ap_poly_info = '../airport_polygons'
 IN_AP, OUT_AP = 'O', 'X'
@@ -36,7 +32,8 @@ DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP = range(4)
 DInNS_PInNS, DInNS_POutNS, DOutNS_PInNS, DOutNS_POutNS = range(4)
 #
 Q_LIMIT_MIN, Q_LIMIT_MAX = 0, 3600
-HOUR = 60 * 60
+HOUR, CENT = 60 * 60, 100
+PROD_LIMIT = 65 / HOUR * CENT
 #
 shifts_dir = prefix + '/shifts'
 full_shift_dir = shifts_dir + '/full_time_drivers' 

@@ -3,32 +3,47 @@ from __future__ import division
 import os, sys  
 sys.path.append(os.getcwd() + '/..')
 #
-from supports._setting import DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP
-from supports._setting import IN_AIRPORT, OUT_AIRPORT
-from supports._setting import DAY_OF_WEEK, TIME_SLOTS
 from supports._setting import for_learning_dir
+from supports._setting import DAY_OF_WEEK, TIME_SLOTS
+from supports._setting import HOUR
+from supports._setting import IN_AP, OUT_AP
 from supports.handling_pkl import save_pickle_file, load_picle_file
+from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
+from supports.etc_functions import remove_creat_dir
 from supports.logger import logging_msg
 #
 import csv, datetime
 #
 MOD_STAN = 100000
-HOUR = 60 * 60
-ALPHA = 0.4
-GAMMA = 0.2
 #
 def run():
+    init_multiprocessor()
+    counter = 0
+    for i in xrange(1, 11): 
+        ALPHA = i / 10 
+        for j in xrange(1, 11):
+            GAMMA = j / 10
+#             process_files(ALPHA, GAMMA)
+            put_task(process_files, [ALPHA, GAMMA])
+            counter += 1
+    end_multiprocessor(counter)
+    
+def process_files(ALPHA, GAMMA):
+    ALPHA_GAMMA_dir = for_learning_dir + '/ALPHA-%.2f-GAMMA-%.2f' % (ALPHA, GAMMA)
+    remove_creat_dir(ALPHA_GAMMA_dir)
+    #
     for y in xrange(9, 11):
         for m in xrange(1, 13):
             yymm = '%02d%02d' % (y, m) 
             if yymm in ['0912', '1010']:
                 continue
-            process_files(yymm)
-    
-def process_files(yymm):
+            process_file(ALPHA, GAMMA, ALPHA_GAMMA_dir, yymm)
+
+def process_file(ALPHA, GAMMA, ALPHA_GAMMA_dir, yymm):            
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
     #
+    print yymm
     if yymm == '0901':
         prev_yymm = None
     elif yymm == '1001':
@@ -40,86 +55,68 @@ def process_files(yymm):
         prev_yymm = '%02d%02d' % (yy, mm - 1)
     #
     if not prev_yymm:
-        Qsa_value, state_prodSum_num = {}, {}
-        locations = [IN_AIRPORT, OUT_AIRPORT]
-        actions = [IN_AIRPORT, OUT_AIRPORT]
+        Qsa_value, state_action_fare_dur = {}, {}
+        locations = [IN_AP, OUT_AP]
+        actions = [IN_AP, OUT_AP]
         for s1 in DAY_OF_WEEK:
             for s2 in TIME_SLOTS:
                 for s3 in locations:
-                    state_prodSum_num[(s1, s2, s3)] = [0, 0]
                     for a in actions:
                         Qsa_value[(s1, s2, s3, a)] = 0
+                        state_action_fare_dur[(s1, s2, s3, a)] = [0, 0]
     else:
-        Qsa_value, state_prodSum_num = load_picle_file('%s/q-value-prods-%s.pkl' % (for_learning_dir, prev_yymm))
+        Qsa_value, state_action_fare_dur = load_picle_file('%s/ALPHA-%.2f-GAMMA-%.2f-q-value-fare-dur-%s.pkl' % (ALPHA_GAMMA_dir, ALPHA, GAMMA, prev_yymm))
     #
-    count = 0
-    with open('%s/trip-for-learning-%s.csv' % (for_learning_dir, yymm), 'rb') as r_csvfile:
+    
+    with open('%s/whole-trip-%s.csv' % (for_learning_dir, yymm), 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
-        _, id_dow, id_hh = headers.index('start-time'), headers.index('day-of-week'), headers.index('hh')
-        id_tm = headers.index('trip-mode')
-        id_prev_tet = headers.index('prev-trip-end-time')
-        id_setup_time = headers.index('setup-time')
+        id_prev_tetime, id_prev_teloc = headers.index('prev-trip-end-time'), headers.index('prev-trip-end-location')
+        id_stime, id_sloc = headers.index('start-time'), headers.index('start-location'),
+        id_etime, id_eloc = headers.index('end-time'), headers.index('end-location'),
         id_dur, id_fare = headers.index('duration'), headers.index('fare')
+        #
+        count = 0
         for row in reader:
-            setup_time = eval(row[id_setup_time])
+            prev_tetime, stime, etime = eval(row[id_prev_tetime]), eval(row[id_stime]), eval(row[id_etime]) 
+            setup_time = stime - prev_tetime
+            #
             if setup_time < 0 or setup_time > HOUR / 2:
-                continue
+                continue 
             #
-            prev_datetime = datetime.datetime.fromtimestamp(eval(row[id_prev_tet])) 
-            s1, s2 = prev_datetime.strftime("%a"), prev_datetime.hour
-            s1_new, s2_new = row[id_dow], eval(row[id_hh])
+            prev_tetime_datetime = datetime.datetime.fromtimestamp(prev_tetime)
+            s1, s2 = prev_tetime_datetime.strftime("%a"), prev_tetime_datetime.hour
+            s3 = row[id_prev_teloc]
             #
-            tm = eval(row[id_tm])
+            etime_datetime = datetime.datetime.fromtimestamp(etime)
+            new_s1, new_s2 = etime_datetime.strftime("%a"), etime_datetime.hour
+            new_s3 = row[id_eloc]
             #
-            if tm == DInAP_PInAP:
-                s3, a, s3_new = IN_AIRPORT, IN_AIRPORT, IN_AIRPORT
-            elif tm == DInAP_POutAP:
-                s3, a, s3_new = IN_AIRPORT, OUT_AIRPORT, OUT_AIRPORT
-            elif tm == DOutAP_PInAP:
-                s3, a, s3_new = OUT_AIRPORT, IN_AIRPORT, IN_AIRPORT
-            elif tm == DOutAP_POutAP:
-                s3, a, s3_new = OUT_AIRPORT, OUT_AIRPORT, OUT_AIRPORT
+            a = row[id_sloc]
+            dur, fare = eval(row[id_dur]), eval(row[id_fare])
+            #
+            state_action_fare_dur[(s1, s2, s3, a)][0] += fare
+            state_action_fare_dur[(s1, s2, s3, a)][1] += setup_time + dur
+            #
+            if Qsa_value[(new_s1, new_s2, new_s3, IN_AP)] > Qsa_value[(new_s1, new_s2, new_s3, OUT_AP)] :
+                future_max_q_value = Qsa_value[(new_s1, new_s2, new_s3, IN_AP)]
             else:
-                assert False    
+                future_max_q_value = Qsa_value[(new_s1, new_s2, new_s3, OUT_AP)]
             #
-            fare, dur = eval(row[id_fare]), eval(row[id_dur])
-            prod = fare / dur
-            if tm == DInAP_PInAP or tm == DOutAP_PInAP:
-                state_prodSum_num[(s1_new, s2_new, IN_AIRPORT)][0] += prod
-                state_prodSum_num[(s1_new, s2_new, IN_AIRPORT)][1] += 1
+            alter_a = OUT_AP if a == IN_AP else IN_AP
+            if state_action_fare_dur[(s1, s2, s3, alter_a)][1] == 0:
+                op_cost = 0
             else:
-                state_prodSum_num[(s1_new, s2_new, OUT_AIRPORT)][0] += prod
-                state_prodSum_num[(s1_new, s2_new, OUT_AIRPORT)][1] += 1
-            #
-#             if tm == DInAP_PInAP or tm == DOutAP_POutAP:
-#                 setup_cost = 0
-            if tm == DInAP_PInAP or tm == DInAP_POutAP:
-                if state_prodSum_num[(s1, s2, IN_AIRPORT)][1] == 0:
-                    setup_cost = 0
-                else:
-                    setup_cost = setup_time * state_prodSum_num[(s1, s2, IN_AIRPORT)][0] / state_prodSum_num[(s1, s2, IN_AIRPORT)][1]
-            elif tm == DOutAP_POutAP or tm == DOutAP_PInAP:
-                if state_prodSum_num[(s1, s2, OUT_AIRPORT)][1] ==0:
-                    setup_cost = 0
-                else:
-                    setup_cost = setup_time * state_prodSum_num[(s1, s2, OUT_AIRPORT)][0] / state_prodSum_num[(s1, s2, OUT_AIRPORT)][1]
-            else:
-                assert False
-            #
-            if Qsa_value[(s1_new, s2_new, s3_new, IN_AIRPORT)] > Qsa_value[(s1_new, s2_new, s3_new, OUT_AIRPORT)] :
-                future_q_value = Qsa_value[(s1_new, s2_new, s3_new, IN_AIRPORT)]
-            else:
-                future_q_value = Qsa_value[(s1_new, s2_new, s3_new, OUT_AIRPORT)]
-            #
-            qrs = fare - setup_cost + GAMMA * future_q_value
+                op_cost = (setup_time + dur) * state_action_fare_dur[(s1, s2, s3, alter_a)][0] / state_action_fare_dur[(s1, s2, s3, alter_a)][1] 
+            qrs = fare - op_cost + GAMMA * future_max_q_value
             Qsa_value[(s1, s2, s3, a)] = \
                         (1 - ALPHA) * Qsa_value[(s1, s2, s3, a)] + ALPHA * qrs
             count += 1
             if count % MOD_STAN == 0:
                 print '%s, %d' % (yymm, count)
                 logging_msg('%s, %d' % (yymm, count))
-                save_pickle_file('%s/q-value-prods-%s.pkl' % (for_learning_dir, yymm), [Qsa_value, state_prodSum_num])
+                save_pickle_file('%s/ALPHA-%.2f-GAMMA-%.2f-q-value-fare-dur-%s.pkl' % (ALPHA_GAMMA_dir, ALPHA, GAMMA, yymm), [Qsa_value, state_action_fare_dur])
+        save_pickle_file('%s/ALPHA-%.2f-GAMMA-%.2f-q-value-fare-dur-%s.pkl' % (ALPHA_GAMMA_dir, ALPHA, GAMMA, yymm), [Qsa_value, state_action_fare_dur])
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
 
