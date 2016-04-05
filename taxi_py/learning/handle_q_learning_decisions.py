@@ -33,8 +33,8 @@ def process_files(_ALPHA, _GAMMA):
     init_multiprocessor()
     counter = 0
     for pkl_file in pickle_files:
-        process_file(ALPHA_GAMMA_dir, pkl_file)
-#         put_task(process_file, [ALPHA_GAMMA_dir, pkl_file])
+#         process_file(ALPHA_GAMMA_dir, pkl_file)
+        put_task(process_file, [ALPHA_GAMMA_dir, pkl_file])
         counter += 1
     end_multiprocessor(counter)
     
