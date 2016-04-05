@@ -19,9 +19,11 @@ MOD_STAN = 100000
 def run():
     init_multiprocessor()
     counter = 0
-    for i in xrange(1, 11): 
+    for i in range(1,11,2):
+#     for i in range(9,0,-2): 
         ALPHA = i / 10 
-        for j in xrange(1, 11):
+        for j in range(1,11,2):
+#         for j in range(9,0,-2):
             GAMMA = j / 10
 #             process_files(ALPHA, GAMMA)
             put_task(process_files, [ALPHA, GAMMA])
@@ -81,7 +83,7 @@ def process_file(ALPHA, GAMMA, ALPHA_GAMMA_dir, yymm):
             prev_tetime, stime, etime = eval(row[id_prev_tetime]), eval(row[id_stime]), eval(row[id_etime]) 
             setup_time = stime - prev_tetime
             #
-            if setup_time < 0 or setup_time > HOUR / 2:
+            if setup_time < 0:
                 continue 
             #
             prev_tetime_datetime = datetime.datetime.fromtimestamp(prev_tetime)

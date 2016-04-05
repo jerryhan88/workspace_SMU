@@ -91,5 +91,5 @@ def process_file(ALPHA_GAMMA_dir, pkl_file):
     save_pickle_file(result_fn, [whole_rev, whole_count, sub_rev, sub_count])
         
 if __name__ == '__main__':
-    ALPHA, GAMMA = 0.2, 0.1
+    ALPHA, GAMMA = 0.1, 0.9
     process_files(ALPHA, GAMMA)
