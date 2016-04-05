@@ -21,7 +21,7 @@ elif plf.startswith('Darwin'):
 else:
     # TODO
 #     assert False, 'Windows?'
-    prefix = 'C:\Users\ckhan.2015\taxi'
+    prefix = 'C:\Users/ckhan.2015/taxi'
 assert prefix
 #
 ap_poly_info = '../airport_polygons'
