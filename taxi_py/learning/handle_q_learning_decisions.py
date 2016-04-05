@@ -41,7 +41,7 @@ def process_file(ALPHA_GAMMA_dir, pkl_file):
     yymm = pkl_file[:-len('.pkl')].split('-')[-1]
     result_fn = '%s/results-%s.pkl' % (ALPHA_GAMMA_dir, yymm)
     if os.path.exists(result_fn):
-        continue
+        return None
     Qsa_value, state_action_fare_dur = load_picle_file('%s/%s' % (ALPHA_GAMMA_dir, pkl_file))
     #
     argmax_as = {}
