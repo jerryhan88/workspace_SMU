@@ -33,7 +33,8 @@ def process_files(_ALPHA, _GAMMA):
     init_multiprocessor()
     counter = 0
     for pkl_file in pickle_files:
-        put_task(process_files, [ALPHA_GAMMA_dir, pkl_file])
+        process_file(ALPHA_GAMMA_dir, pkl_file)
+#         put_task(process_file, [ALPHA_GAMMA_dir, pkl_file])
         counter += 1
     end_multiprocessor(counter)
     
@@ -88,7 +89,6 @@ def process_file(ALPHA_GAMMA_dir, pkl_file):
                 logging_msg('%s, %d' % (yymm, count))
                 save_pickle_file(result_fn, [whole_rev, whole_count, sub_rev, sub_count])
     save_pickle_file(result_fn, [whole_rev, whole_count, sub_rev, sub_count])
-                
         
 if __name__ == '__main__':
     ALPHA, GAMMA = 0.2, 0.1
