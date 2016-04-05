@@ -83,7 +83,7 @@ def process_file(ALPHA, GAMMA, ALPHA_GAMMA_dir, yymm):
             prev_tetime, stime, etime = eval(row[id_prev_tetime]), eval(row[id_stime]), eval(row[id_etime]) 
             setup_time = stime - prev_tetime
             #
-            if setup_time < 0:
+            if setup_time < 0 or HOUR * 2 < setup_time:
                 continue 
             #
             prev_tetime_datetime = datetime.datetime.fromtimestamp(prev_tetime)
