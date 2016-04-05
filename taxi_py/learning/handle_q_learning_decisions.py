@@ -24,11 +24,11 @@ def run():
             process_files(ALPHA, GAMMA)
 #             put_task(process_files, [ALPHA, GAMMA])
 
-def process_files(ALPHA, GAMMA):
-    ALPHA_GAMMA_dir = for_learning_dir + '/ALPHA-%.2f-GAMMA-%.2f' % (ALPHA, GAMMA)
+def process_files(_ALPHA, _GAMMA):
+    ALPHA_GAMMA_dir = for_learning_dir + '/ALPHA-%.2f-GAMMA-%.2f' % (_ALPHA, _GAMMA)
     if not os.path.exists(ALPHA_GAMMA_dir):
         return None
-    pickle_files = get_all_files(ALPHA_GAMMA_dir, 'ALPHA-%.2f-GAMMA-%.2f' % (ALPHA, GAMMA), '.pkl')
+    pickle_files = get_all_files(ALPHA_GAMMA_dir, 'ALPHA-%.2f-GAMMA-%.2f' % (_ALPHA, _GAMMA), '.pkl')
     #
     init_multiprocessor()
     counter = 0
