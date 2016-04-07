@@ -8,7 +8,7 @@ from supports.logger import logging_msg
 from supports.handling_pkl import save_pickle_file, load_picle_file
 from supports._setting import IN_AP, OUT_AP
 from supports._setting import DAY_OF_WEEK, TIME_SLOTS
-from supports.etc_functions import get_all_files
+from supports.etc_functions import get_all_files, get_all_directories
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 #
 import csv, datetime
@@ -17,26 +17,17 @@ HOUR = 60 * 60
 MOD_STAN = 100000
 #
 def run():
-    for i in xrange(1, 11): 
-        ALPHA = i / 10 
-        for j in xrange(1, 11):
-            GAMMA = j / 10
-            process_files(ALPHA, GAMMA)
-#             put_task(process_files, [ALPHA, GAMMA])
-
-def process_files(_ALPHA, _GAMMA):
-    ALPHA_GAMMA_dir = for_learning_dir + '/ALPHA-%.2f-GAMMA-%.2f' % (_ALPHA, _GAMMA)
-    if not os.path.exists(ALPHA_GAMMA_dir):
-        return None
-    pickle_files = get_all_files(ALPHA_GAMMA_dir, 'ALPHA-%.2f-GAMMA-%.2f' % (_ALPHA, _GAMMA), '.pkl')
-    #
-    init_multiprocessor()
-    counter = 0
-    for pkl_file in pickle_files:
-#         process_file(ALPHA_GAMMA_dir, pkl_file)
-        put_task(process_file, [ALPHA_GAMMA_dir, pkl_file])
-        counter += 1
-    end_multiprocessor(counter)
+    for dn in get_all_directories(for_learning_dir):
+        ALPHA_GAMMA_dir = for_learning_dir + '/%s' % (dn)
+        pickle_files = get_all_files(ALPHA_GAMMA_dir, 'ALPHA-', '.pkl')
+        #
+        init_multiprocessor()
+        counter = 0
+        for pkl_file in pickle_files:
+    #         process_file(ALPHA_GAMMA_dir, pkl_file)
+            put_task(process_file, [ALPHA_GAMMA_dir, pkl_file])
+            counter += 1
+        end_multiprocessor(counter)
     
 def process_file(ALPHA_GAMMA_dir, pkl_file):
     yymm = pkl_file[:-len('.pkl')].split('-')[-1]
@@ -91,5 +82,6 @@ def process_file(ALPHA_GAMMA_dir, pkl_file):
     save_pickle_file(result_fn, [whole_rev, whole_count, sub_rev, sub_count])
         
 if __name__ == '__main__':
-    ALPHA, GAMMA = 0.1, 0.9
-    process_files(ALPHA, GAMMA)
+    run()
+#     ALPHA, GAMMA = 0.1, 0.9
+#     process_files(ALPHA, GAMMA)
