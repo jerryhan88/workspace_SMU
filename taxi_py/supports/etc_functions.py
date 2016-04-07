@@ -7,8 +7,11 @@ def remove_creat_dir(path):
         shutil.rmtree(path)
     os.makedirs(path)
     
-def get_all_files(path, filtering_prefix, filtering_postfix):
-    return [fn for fn in os.listdir(path) if fn.startswith(filtering_prefix) and fn.endswith(filtering_postfix)]
+def get_all_files(_path, filtering_prefix, filtering_postfix):
+    return [fn for fn in os.listdir(_path) if fn.startswith(filtering_prefix) and fn.endswith(filtering_postfix)]
+
+def get_all_directories(_path):
+    return [dn for dn in os.listdir(_path) if os.path.isdir('%s/%s' % (_path, dn))]
 
 def get_date(_timestamp):
     return datetime.datetime.fromtimestamp(_timestamp).strftime('%Y-%m-%d %H:%M:%S')
