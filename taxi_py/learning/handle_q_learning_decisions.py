@@ -17,35 +17,42 @@ HOUR = 60 * 60
 MOD_STAN = 100000
 #
 def run():
-    for dn in get_all_directories(for_learning_dir):
-        ALPHA_GAMMA_dir = for_learning_dir + '/%s' % (dn)
-        pickle_files = get_all_files(ALPHA_GAMMA_dir, 'ALPHA-', '.pkl')
-        if len(pickle_files) != 22:
-            continue
-        #
-        init_multiprocessor()
-        counter = 0
-        for pkl_file in pickle_files:
-    #         process_file(ALPHA_GAMMA_dir, pkl_file)
-            put_task(process_file, [ALPHA_GAMMA_dir, pkl_file])
+    candi_dirs = get_all_directories(for_learning_dir)
+    q_lerning_ended_dir = [dn for dn in candi_dirs if len(get_all_files(for_learning_dir + '/%s' % (dn), 'ALPHA-', '.pkl')) == 22]
+    init_multiprocessor()
+    counter = 0
+    for y in xrange(9, 11):
+        for m in xrange(1, 13):
+            yymm = '%02d%02d' % (y, m) 
+            if yymm in ['0912', '1010']:
+                continue
+#             process_files(yymm, q_lerning_ended_dir)
+            put_task(process_files, [yymm, q_lerning_ended_dir])
             counter += 1
-        end_multiprocessor(counter)
-    
-def process_file(ALPHA_GAMMA_dir, pkl_file):
-    yymm = pkl_file[:-len('.pkl')].split('-')[-1]
-    result_fn = '%s/results-%s.pkl' % (ALPHA_GAMMA_dir, yymm)
-    if os.path.exists(result_fn):
-        return None
-    Qsa_value, state_action_fare_dur = load_picle_file('%s/%s' % (ALPHA_GAMMA_dir, pkl_file))
+    end_multiprocessor(counter)
+                
+def process_files(yymm, q_lerning_ended_dir):
+    candi_pkl_files = []
+    for dn in q_lerning_ended_dir:
+        if os.path.exists('%s/%s/results-%s.pkl' % (for_learning_dir, dn, yymm)):
+            continue
+        candi_pkl_files.append('%s/%s/%s-q-value-fare-dur-%s.pkl' % (for_learning_dir, dn, dn, yymm))
+    result_pkls = [os.path.dirname(pkl_path) + '/results-%s.pkl'% yymm for pkl_path in candi_pkl_files]
     #
-    argmax_as = {}
-    for s1 in DAY_OF_WEEK:
-        for s2 in TIME_SLOTS:
-            for s3 in [IN_AP, OUT_AP]:
-                argmax_as[(s1, s2, s3)] = IN_AP if Qsa_value[(s1, s2, s3, IN_AP)] >= Qsa_value[(s1, s2, s3, OUT_AP)] else OUT_AP
+    list_argmax_as = []
+    state_action_fare_dur = None
+    for pkl_file_path in candi_pkl_files:
+        Qsa_value, state_action_fare_dur = load_picle_file(pkl_file_path)
+        argmax_as = {}
+        for s1 in DAY_OF_WEEK:
+            for s2 in TIME_SLOTS:
+                for s3 in [IN_AP, OUT_AP]:
+                    argmax_as[(s1, s2, s3)] = IN_AP if Qsa_value[(s1, s2, s3, IN_AP)] >= Qsa_value[(s1, s2, s3, OUT_AP)] else OUT_AP
+        list_argmax_as.append(argmax_as)
     #
     whole_rev, whole_count = 0, 0
-    sub_rev, sub_count = 0, 0
+    list_sub_rev, list_sub_count = [0 for _ in xrange(len(candi_pkl_files))], [0 for _ in xrange(len(candi_pkl_files))]
+    
     count = 0        
     with open('%s/whole-trip-%s.csv' % (for_learning_dir, yymm), 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
@@ -73,17 +80,21 @@ def process_file(ALPHA_GAMMA_dir, pkl_file):
             #
             whole_rev += economic_profit
             whole_count += 1
-            if argmax_as[(s1, s2, s3)] == a:
-                sub_rev += economic_profit
-                sub_count += 1
+            
+            for i, argmax_as in enumerate(list_argmax_as):
+                if argmax_as[(s1, s2, s3)] == a:
+                    list_sub_rev[i] += economic_profit
+                    list_sub_count[i] += 1
             count += 1
             if count % MOD_STAN == 0:
                 print '%s, %d' % (yymm, count)
                 logging_msg('%s, %d' % (yymm, count))
-                save_pickle_file(result_fn, [whole_rev, whole_count, sub_rev, sub_count])
-    save_pickle_file(result_fn, [whole_rev, whole_count, sub_rev, sub_count])
+                for i in xrange(len(result_pkls)):
+                    result_fn = result_pkls[i]
+                    save_pickle_file(result_fn, [whole_rev, whole_count, list_sub_rev[i], list_sub_count[i]])
+    for i in xrange(len(result_pkls)):
+        result_fn = result_pkls[i]
+        save_pickle_file(result_fn, [whole_rev, whole_count, list_sub_rev[i], list_sub_count[i]])
         
 if __name__ == '__main__':
     run()
-#     ALPHA, GAMMA = 0.1, 0.9
-#     process_files(ALPHA, GAMMA)
