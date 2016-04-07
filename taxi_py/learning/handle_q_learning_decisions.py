@@ -20,6 +20,8 @@ def run():
     for dn in get_all_directories(for_learning_dir):
         ALPHA_GAMMA_dir = for_learning_dir + '/%s' % (dn)
         pickle_files = get_all_files(ALPHA_GAMMA_dir, 'ALPHA-', '.pkl')
+        if len(pickle_files) != 22:
+            continue
         #
         init_multiprocessor()
         counter = 0
