@@ -9,7 +9,7 @@ from supports._setting import logs_dir
 from supports.etc_functions import remove_creat_dir
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 from supports.logger import logging_msg
-from supports.location_check import is_in_airport
+from supports.location_check import is_in_airport, is_in_night_safari
 
 TARGET_YEARS = ['2009', '2010']
 server_prefix = '/home/taxi'
@@ -56,8 +56,8 @@ def process_file(path_to_csv_file):
             #
             for row in reader:        
                 ap_or_not = is_in_airport(eval(row[index_long]), eval(row[index_lat]))
-                np_or_not = is_in_airport(eval(row[index_long]), eval(row[index_lat]))
-                new_row = [row[id_time], row[id_vid], row[id_did], ap_or_not, ]
+                np_or_not = is_in_night_safari(eval(row[index_long]), eval(row[index_lat]))
+                new_row = [row[id_time], row[id_vid], row[id_did], ap_or_not, np_or_not]
                 writer.writerow(new_row)
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
