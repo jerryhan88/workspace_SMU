@@ -14,7 +14,8 @@ X_LOGGING = False
 #
 TAXI_HOME = '/home/taxi'
 USER_HOME = '/home/ckhan'
-YEARS = ['2009', '2010', '2011', '2012']
+# YEARS = ['2009', '2010', '2011', '2012']
+YEARS = ['2011', '2012']
 MONTHS = ['01', '02', '03', '04', '05', '06',
           '07', '08', '09', '10', '11', '12']
 
@@ -130,6 +131,6 @@ if __name__ == '__main__':
 #     from shapely.geometry import Polygon
 #     print 'test!!'
 #     test_single_run()
-#     combine_trip_data_with_multi()
-    combine_trip_data()
+    combine_trip_data_with_multi()
+#     combine_trip_data()
     
