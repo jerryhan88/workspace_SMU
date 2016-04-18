@@ -34,6 +34,7 @@ DInNS_PInNS, DInNS_POutNS, DOutNS_PInNS, DOutNS_POutNS = range(4)
 #
 Q_LIMIT_MIN, Q_LIMIT_MAX = 0, 3600
 HOUR, CENT = 60 * 60, 100
+MINUTE = 60
 PROD_LIMIT = 65 / HOUR * CENT
 #
 shifts_dir = prefix + '/shifts'
@@ -56,6 +57,5 @@ individual_dir = prefix + '/individual-summary'
 individual_detail_dir = prefix + '/individual-detail-summary'
 #
 # For Q-learning
-IN_AIRPORT, OUT_AIRPORT = range(2)
 DAY_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 TIME_SLOTS = range(24)
