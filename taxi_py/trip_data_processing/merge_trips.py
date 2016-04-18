@@ -121,6 +121,6 @@ if __name__ == '__main__':
 #     from shapely.geometry import Polygon
 #     print 'test!!'
 #     test_single_run()
-    combine_trip_data_with_multi()
-#     combine_trip_data()
+#     combine_trip_data_with_multi()
+    combine_trip_data()
     
