@@ -13,17 +13,19 @@ import pandas as pd
 #
 trip_prefix = 'whole-trip-'
 ap_fn = '%s/whole-ap-tm-num-dur-fare.csv' % (trips_dir)
+ap_fn_temp = '%s/whole-ap-tm-num-dur-fare_temp.csv' % (trips_dir)
 ns_fn = '%s/whole-ns-tm-num-dur-fare.csv' % (trips_dir)
+np_fn_temp = '%s/whole-ns-tm-num-dur-fare_temp.csv' % (trips_dir)
 #
 def run():
     with open(ap_fn, 'wt') as csvFile:
         writer = csv.writer(csvFile)
-        header = ['yy', 'mm', 'dd', 'hh', 'ap-trip-mode', 'num-tm', 'total-dur', 'total-fare']
+        header = ['yy', 'mm', 'dd', 'hh', 'day-of-week', 'ap-trip-mode', 'num-tm', 'total-dur', 'total-fare']
         writer.writerow(header)
     
     with open(ns_fn, 'wt') as csvFile:
         writer = csv.writer(csvFile)
-        header = ['yy', 'mm', 'dd', 'hh', 'ns-trip-mode', 'num-tm', 'total-dur', 'total-fare']
+        header = ['yy', 'mm', 'dd', 'hh', 'day-of-week', 'ns-trip-mode', 'num-tm', 'total-dur', 'total-fare']
         writer.writerow(header)
     
     for y in xrange(9, 11):
@@ -94,10 +96,28 @@ def process_files(yymm):
 
 def save_as_csv(fn, yymm, dd, hh, _data):
     yy, mm = yymm[:2], yymm[2:]
+    yyyy = 2000 + int(yy)
+    cur_datetime = datetime.datetime(yyyy, eval(mm), dd, hh)
+    dow = cur_datetime.strftime("%a") 
     with open(fn, 'a') as csvFile:
         writer = csv.writer(csvFile)
         for tm, num, totalDur, totalFare in _data:
-            writer.writerow([yy, mm, dd, hh, tm, num, totalDur, totalFare])
+            writer.writerow([yy, mm, dd, hh, dow, tm, num, totalDur, totalFare])
+
+def temp_convert():
+    with open(ns_fn, 'rb') as r_csvfile:
+        reader = csv.reader(r_csvfile)
+        headers = reader.next()
+        id_yy, id_mm, id_dd, id_hh = headers.index('yy'), headers.index('mm'), headers.index('dd'), headers.index('hh')
+        with open(np_fn_temp, 'wt') as w_csvFile:
+            writer = csv.writer(w_csvFile)
+            writer.writerow(headers + ['day-of-week'])
+            for row in reader:
+                yyyy, mm, dd, hh = 2000 + int(row[id_yy]), int(row[id_mm]), int(row[id_dd]), int(row[id_hh])
+                cur_datetime = datetime.datetime(yyyy, mm, dd, hh)
+                dow = cur_datetime.strftime("%a")
+                writer.writerow(row + [dow])
 
 if __name__ == '__main__':
-    run()    
+    temp_convert()
+#     run()    

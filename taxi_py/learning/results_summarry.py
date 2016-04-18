@@ -36,5 +36,22 @@ def process_files(ALPHA, GAMMA):
             writer = csv.writer(w_csvfile)
             writer.writerow([ALPHA, GAMMA, yy, mm, whole_rev / whole_count, sub_rev / sub_count])
 
+def draw_chart():
+    import pandas as pd
+    from supports.charts import line_3D
+    df = pd.read_csv('%s/%s' % (for_learning_dir, 'results_summary.csv'))
+    df['diff'] = df['avg-sub-rev'] - df['avg-whole-rev']
+    gb = df.groupby(['ALPHA', 'GAMMA'])
+    xyz = [[] for _ in xrange(10)]
+    _alpha, _gamma, _diff = None, None, -1e400
+    for alpha, gamma, diff in gb.mean()['diff'].to_frame('avg_diff').reset_index().values:
+        print alpha, gamma, diff
+        if diff > _diff:
+            _alpha, _gamma, _diff = alpha, gamma, diff
+        i = int(alpha * 10) - 1
+        xyz[i].append([alpha, gamma, diff/100])
+    
+    line_3D((6, 6), '', r'$\alpha$', r'$\gamma$', 'Difference, S$',xyz)
+
 if __name__ == '__main__':
-    run()
+    draw_chart()
