@@ -15,7 +15,7 @@ PERIOD = 30
 X_LOGGING = False
 #
 TAXI_HOME = '/home/taxi'
-USER_HOME = '/home/ckhan'
+USER_HOME = '/home/temp'
 # YEARS = ['2009', '2010', '2011', '2012']
 YEARS = ['2011', '2012']
 MONTHS = ['01', '02', '03', '04', '05', '06',
@@ -38,13 +38,13 @@ def combine_trip_data_with_multi():
     logging_on_txt('Start combine!!', gen_txt=True)
     init_multiprocessor()
     print 'Start combine'
-    for y in YEARS[:2]:
+    for y in YEARS:
         y_two_digit = y[-2:]
-        for m in MONTHS[:2]:
+        for m in MONTHS:
             normal_file = TAXI_HOME + '/%s/%s/trips/trips-%s%s-normal.csv' % (y, m, y_two_digit, m)
             ext_file = TAXI_HOME + '/%s/%s/trips/trips-%s%s-normal-ext.csv' % (y, m, y_two_digit, m)
             put_task(read_write_a_trip, [normal_file, ext_file])
-    end_multiprocessor(len(YEARS[:2]) * len(MONTHS[:2]))
+    end_multiprocessor(len(YEARS) * len(MONTHS))
 
 def read_write_a_trip(nf, ef):
     target_period = nf.split('/')[-1].split('-')[1]
@@ -61,25 +61,14 @@ def read_write_a_trip(nf, ef):
     #
     assert len(normal_data) == len(ext_data), (target_period, len(normal_data), len(ext_data)) 
     # Write a combined file
-    combined_file = USER_HOME + '/taxi/trips/trips-%s.csv' % (target_period)
+    combined_file = USER_HOME + '/trips_merged/trips-%s.csv' % (target_period)
     logging_on_txt('Write a combined file-%s' % target_period)
     with open(combined_file, 'wt') as csvfile:
         writer = csv.writer(csvfile)
         for i in xrange(len(normal_data)):
-            check_progress()
             writer.writerow(normal_data[i] + ext_data[i])
     del normal_data, ext_data  
     logging_on_txt('Finish handiling trip-%s; t: %.2f' % (target_period, time() - process_start_time)) 
-
-def check_progress():
-    global X_LOGGING
-    if X_LOGGING:
-        return
-    global _fix_time
-    t = time()
-    if (t - _fix_time) > PERIOD:
-        _stout.write('.')
-        _fix_time = t
             
 def csv_read_whole(fn):
     rv = []
@@ -88,7 +77,6 @@ def csv_read_whole(fn):
             reader = csv.reader(csvfile)
             i = 0 
             for row in reader:
-                check_progress()
                 rv.append(row)
                 i += 1
     except IOError:
