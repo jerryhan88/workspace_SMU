@@ -16,17 +16,17 @@ full_time_drivers, _, _, _, _, _, _, _, _, _, _ = load_picle_file('%s/productivi
 driver_full_or_not = [False] * (max(full_time_drivers) + 1)
 for did in full_time_drivers:
     driver_full_or_not[int(did)] = True
-#
 check_progress = 10000000
+#
 def run():
     remove_creat_dir(for_full_driver_dir)
-#     init_multiprocessor()
+    init_multiprocessor()
     count_num_jobs = 0
     for fn in get_all_files(trips_dir, trip_prefix, '.csv'):
-        process_file(fn)
-#         put_task(process_file, [fn])
-#         count_num_jobs += 1
-#     end_multiprocessor(count_num_jobs)
+#         process_file(fn)
+        put_task(process_file, [fn])
+        count_num_jobs += 1
+    end_multiprocessor(count_num_jobs)
 
 def process_file(fn):
     _, _, yymm = fn[:-len('.csv')].split('-')
@@ -42,7 +42,7 @@ def process_file(fn):
             count = 0
             for row in reader:
                 did = int(row[id_did])
-                if did > len(driver_full_or_not):
+                if did > len(driver_full_or_not) or did < 0:
                     continue
                 if driver_full_or_not[did]:
                     writer.writerow(row)
