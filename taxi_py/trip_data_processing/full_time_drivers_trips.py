@@ -31,7 +31,7 @@ def run():
     end_multiprocessor(count_num_jobs)
 
 def process_file(fn):
-    _, _, yymm = fn[:-len('.csv')].split('-')
+    _, yymm = fn[:-len('.csv')].split('-')
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
     with open('%s/%s' % (merged_trip_dir, fn), 'rb') as r_csvfile:
