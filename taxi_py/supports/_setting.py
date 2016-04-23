@@ -33,8 +33,8 @@ DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP = range(4)
 DInNS_PInNS, DInNS_POutNS, DOutNS_PInNS, DOutNS_POutNS = range(4)
 #
 Q_LIMIT_MIN, Q_LIMIT_MAX = 0, 3600
-HOUR, CENT = 60 * 60, 100
-MINUTE = 60
+HOUR, MINUTE = 60 * 60, 60
+CENT = 100
 PROD_LIMIT = 65 / HOUR * CENT
 #
 shifts_dir = prefix + '/shifts'
@@ -43,10 +43,10 @@ full_shift_dir = shifts_dir + '/full_time_drivers'
 logs_dir = prefix + '/logs'
 log_last_day_dir = logs_dir + '/logs_last_day'
 #
-
 merged_trip_dir = prefix + '/trips_merged'
 trips_dir = prefix + '/trips'
 for_learning_dir = prefix + '/for_learning'
+for_full_driver_dir = prefix + '/full_drivers_trips_q_comparision'
 aiport_trips_dir = trips_dir + '/airport_trips'
 hourly_summary = trips_dir + '/hourly_summary'
 #

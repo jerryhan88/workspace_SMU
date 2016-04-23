@@ -6,6 +6,7 @@ import matplotlib.mlab as mlab
 from matplotlib.path import Path
 import matplotlib.patches as patches
 from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.ticker as tkr
 
 _rgb = lambda r, g, b: (r / 255, g / 255, b / 255)
 
@@ -15,34 +16,39 @@ clists = (
     _rgb(238, 130, 238),  # violet
     _rgb(255, 228, 225),  # misty rose
     _rgb(127, 255, 212),  # aqua-marine
+    'yellow',
     _rgb(220, 220, 220),  # gray
-    'yellow'
+    _rgb(255, 165, 0),  # orange
+    'black'
 )
 
 mlists = (
-'o', #    circle
-'v', #    triangle_down
-'^', #    triangle_up
-'<', #    triangle_left
-'>', #    triangle_right
-'s', #    square
-'p', #    pentagon
-'*', #    star
-'+', #    plus
-'x', #    x
-'D', #    diamond
-'h', #    hexagon1
-'1', #    tri_down
-'2', #    tri_up
-'3', #    tri_left
-'4', #    tri_right
-'8', #    octagon
-'H', #    hexagon2
-'d', #    thin_diamond
-'|', #    vline
-'_', #    hline
-'.', #    point
-',', #    pixel
+'o',  #    circle
+'v',  #    triangle_down
+'^',  #    triangle_up
+'<',  #    triangle_left
+'>',  #    triangle_right
+'s',  #    square
+'p',  #    pentagon
+'*',  #    star
+'+',  #    plus
+'x',  #    x
+'D',  #    diamond
+'h',  #    hexagon1
+'1',  #    tri_down
+'2',  #    tri_up
+'3',  #    tri_left
+'4',  #    tri_right
+'8',  #    octagon
+'H',  #    hexagon2
+'d',  #    thin_diamond
+'|',  #    vline
+'_',  #    hline
+'.',  #    point
+',',  #    pixel
+
+'D',  #    diamond
+'8',  #    octagon
           )
 
 save_dir = '/Users/JerryHan88/Desktop/'
@@ -63,7 +69,7 @@ class one_histogram(object):
 
 class multiple_line_chart(object):
     def __init__(self, _figsize, _title, _xlabel, _ylabel, xticks_info, multi_y_data, y_legend_labels, legend_pos, save_fn=None):
-        assert len(multi_y_data) == len(y_legend_labels)
+        assert len(multi_y_data) == len(y_legend_labels),multi_y_data 
         fig = plt.figure(figsize=_figsize)
         ax = fig.add_subplot(111)
         ax.set_title(_title)
@@ -75,37 +81,28 @@ class multiple_line_chart(object):
             ymax1 = max(y_data)
             if ymax < ymax1:
                 ymax = ymax1
-        ax.set_ybound(upper=ymax * 1.05)
         plt.legend(y_legend_labels, ncol=1, loc=legend_pos, fontsize=10)
         #
         _xticks, _rotation = xticks_info 
         plt.xticks(range(len(_xticks)), _xticks, rotation=_rotation)
         ax.set_xbound(lower=0, upper=range(len(_xticks))[-1])
+        #
+        ax.set_ybound(upper=ymax * 1.05)
+        ax.yaxis.set_major_formatter(tkr.FuncFormatter(comma_formating))  # set formatter to needed axis
         if save_fn:
             plt.savefig('%s/%s.pdf' % (save_dir, save_fn))
-        plt.show()
+        plt.show()  
 
 class line_3D(object):
     def __init__(self, _figsize, _title, _xlabel, _ylabel, _zlabel, _data):
         fig = plt.figure(figsize=_figsize)
         ax = fig.gca(projection='3d')
         ax.set_title(_title); ax.set_xlabel(_xlabel); ax.set_ylabel(_ylabel); ax.set_zlabel(_zlabel)
-        
         for xyz in _data:
             x, y, z = zip(*xyz)
             ax.plot(x, y, z)
             ax.legend()
-        
-#         theta = np.linspace(-4 * np.pi, 4 * np.pi, 100)
-#         z = np.linspace(-2, 2, 100)
-#         r = z ** 2 + 1
-#         x = r * np.sin(theta)
-#         y = r * np.cos(theta)
-#         ax.plot(x, y, z, label='parametric curve')
-        
-        
         plt.show()
-
 
 class bar_table(object):
     def __init__(self, _title, _ylabel, row_labels, col_labels, table_data, save_fn=None):
@@ -116,7 +113,6 @@ class bar_table(object):
         #
         bar_width = 0.5
         ind = [bar_width / 2 + i for i in xrange(len(col_labels))]
-#         index,  = np.arange(len(col_labels)), 
         #
         bar_data = table_data[:]
         bar_data.reverse()
@@ -125,14 +121,16 @@ class bar_table(object):
             plt.bar(ind, row_data, bar_width, bottom=y_offset, color=clists[i])
             y_offset = y_offset + row_data
         ax.set_xlim(0, len(ind))
-#         cell_text.reverse()
-#         row_labels.reverse()
         #
-        table = plt.table(cellText=table_data, colLabels=col_labels, rowLabels=row_labels, loc='bottom')
+        formated_table_data = []
+        for r in table_data:
+            formated_table_data.append(['{:,}'.format(x) for x in r])
+        table = plt.table(cellText=formated_table_data, colLabels=col_labels, rowLabels=row_labels, loc='bottom')
         table.scale(1, 2)
         #
         plt.subplots_adjust(left=0.2, bottom=0.2)
         plt.ylabel(_ylabel)
+        ax.yaxis.set_major_formatter(tkr.FuncFormatter(comma_formating))  # set formatter to needed axis
         plt.xticks([])
         plt.title(_title)
         if save_fn:
@@ -174,8 +172,34 @@ class two_pie_chart(object):
             plt.savefig('%s/%s.pdf' % (save_dir, save_fn))
         plt.show()
 
+class histo_cumulative(object):
+    def __init__(self, _title, x_label, y_label, num_bin, xs_data, _legend, save_fn=None):
+        assert len(xs_data) == len(_legend)
+        plt.figure(figsize=(6, 6))
+        x_means, x_stds = [], []
+        for i, x_data in enumerate(xs_data):
+            _, bins, _ = plt.hist(x_data, num_bin, normed=1,
+                                    histtype='step', cumulative=True, color=clists[i])
+            x_mean, x_std = np.mean(x_data), np.std(x_data)
+            x_means.append(x_mean); x_stds.append(x_std)
+            #
+            y = mlab.normpdf(bins, x_mean, x_std).cumsum()
+            y /= y[-1]
+#             plt.plot(bins, y, 'k--', linewidth=1.5)
+        plt.legend(_legend, ncol=1, loc='upper left', fontsize=10)
+        #
+        plt.xlabel(x_label); plt.ylabel(y_label)
+        
+        s = r'  '.join(['$\mathrm{%s}\ \mu=%.2f,\ \sigma=%.2f$' % (_legend[i], x_means[i], x_stds[i]) for i in xrange(len(_legend))])
+        plt.title(s)
+        
+        if save_fn:
+            plt.savefig('%s/%s.pdf' % (save_dir, save_fn))
+        plt.show()
+
+
 class histograms(object):
-    def __init__(self, chart_info):
+    def __init__(self, _figsize, chart_info):
         # chart_info is two dimensional array (list)
         # The first dimension means rows
         # ex. 2X2 charts
@@ -183,7 +207,7 @@ class histograms(object):
         # [(_title, x_label, y_label, num_bin, x_data), (_title, x_label, y_label, num_bin, x_data)],
         # [(_title, x_label, y_label, num_bin, x_data), (_title, x_label, y_label, num_bin, x_data)]
         # ] 
-        plt.figure(figsize=(12, 6))
+        plt.figure(figsize=_figsize)
         _, axarr = plt.subplots(len(chart_info), len(chart_info[0]))
         for i, row in enumerate(chart_info):
             for j, (_title, x_label, y_label, num_bin, x_data) in enumerate(row):
@@ -196,9 +220,6 @@ class histograms(object):
                 ax.set_xlabel(x_label); ax.set_ylabel(y_label)
                 ax.set_title(r'$\mathrm{%s}\ \mu=%.2f,\ \sigma=%.2f$' % (_title, x_mean, x_std))
         plt.show()
-
-
-        
 
 class bar_chart(object):
     def __init__(self, _title, _ylabel, xTickMarks, _data):
@@ -276,6 +297,7 @@ class horizontal_bar_chart(object):
             ax.add_patch(patch)
         ax.set_xlim(min(xs) - grid_charts.HALF_UNIT, max(xs) + grid_charts.HALF_UNIT)
         ax.set_ylim(min(ys) - grid_charts.HALF_UNIT, max(ys) + grid_charts.HALF_UNIT)
+        ax.grid()
         plt.yticks([int(len(ys) * 0.00), int(len(ys) * 0.25), int(len(ys) * 0.50), int(len(ys) * 0.75), int(len(ys) * 1.00)], ['0%', '25%', '50%', '75%', '100%'])
         # TODO
         # Modify saving part
@@ -342,19 +364,90 @@ class grid_charts(object):
         ignored = left_bottom
         return [left_bottom, left_top  , right_top , right_bottom, ignored]
 
+def comma_formating(x, pos):  # formatter function takes tick label and tick position
+#     return int(x)
+    if x == 0:
+        return int(x)
+    if x < 10:
+        return x
+    s = '%d' % x
+    groups = []
+    while s and s[-1].isdigit():
+        groups.append(s[-3:])
+        s = s[:-3]
+    return s + ','.join(reversed(groups))
+
+class x_twin_chart(object):
+    def __init__(self, _figsize, _title, x_info, y_info1, y_info2, save_fn=None):
+        _xlabel, _xticks, _rotation = x_info
+        _ylabel1, multi_y_data1, bounds1, y_legend_labels1, legend_pos1 = y_info1
+        _ylabel2, multi_y_data2, bounds2, y_legend_labels2, legend_pos2 = y_info2
+        assert len(multi_y_data1) == len(y_legend_labels1)
+        assert len(multi_y_data2) == len(y_legend_labels2)
+        assert len(multi_y_data1[0]) == len(multi_y_data2[0])
+        #
+        fig = plt.figure(figsize=_figsize)
+        #
+        ax1 = fig.add_subplot(111)
+        #
+        ymax = 0
+        for i, y_data in enumerate(multi_y_data1):
+            plt.plot(range(len(y_data)), y_data, linewidth=1, color=clists[i], marker=mlists[i])
+            ymax1 = max(y_data)
+            if ymax < ymax1:
+                ymax = ymax1
+        plt.legend(y_legend_labels1, ncol=1, loc=legend_pos1, fontsize=12)
+        if bounds1:
+            ax1.set_ybound(lower=bounds1[0], upper=bounds1[1])
+        else:
+            ax1.set_ybound(upper=ymax * 1.05)
+        ax1.yaxis.set_major_formatter(tkr.FuncFormatter(comma_formating))  # set formatter to needed axis
+        #
+        ax2 = ax1.twinx()
+        ymax = 0
+        for i, y_data in enumerate(multi_y_data2):
+            plt.plot(range(len(y_data)), y_data, '--', linewidth=1, color=clists[-(i + 1)], marker=mlists[-(i+1)])
+            ymax1 = max(y_data)
+            if ymax < ymax1:
+                ymax = ymax1
+        plt.legend(y_legend_labels2, ncol=1, loc=legend_pos2, fontsize=12)
+        if bounds2:
+            ax2.set_ybound(lower=bounds2[0], upper=bounds2[1])
+        else:
+            ax2.set_ybound(upper=ymax * 1.05) 
+        ax2.yaxis.set_major_formatter(tkr.FuncFormatter(comma_formating))  # set formatter to needed axis
+        #
+        plt.xticks(range(len(_xticks)), _xticks, rotation=_rotation)
+        ax1.set_xbound(lower=0, upper=range(len(_xticks))[-1])
+        #
+        ax1.set_title(_title)
+        ax1.set_xlabel(_xlabel)
+        ax1.set_ylabel(_ylabel1)
+        ax2.set_ylabel(_ylabel2)
+        #
+        if save_fn:
+            plt.savefig('%s/%s.pdf' % (save_dir, save_fn))
+        plt.show()
+
 def test():
+#     n_bins = 50
+#     mu, sigma = 200, 25
+#     x1 = mu + sigma*np.random.randn(10000)
+#     mu, sigma = 200, 50
+#     x2 = mu + sigma*np.random.randn(10000)
+#     
+#     histo_cumulative('', 'x_label', 'y_label', n_bins, [x1, x2], ['Y2009', 'Y2010'], save_fn=None)
     
+    num_trip = [306117 , 201973 , 53408 , 31251 , 24590 , 66184 , 198111 , 182191 , 150242 , 123608 , 112527 , 128077 , 182481 , 170057 , 195326 , 248171 , 237464 , 242071 , 279671 , 229624 , 325573 , 296758 , 448576 , 352399]
+    Y10_hourly_qt = [35.644270303044173, 33.305448869989497, 35.575034632579808, 48.892812311406153, 45.296450886645928, 45.857049134561699, 31.763542493054452, 39.714915922338243, 40.110275205474359, 39.032016512734394, 32.560647065540643, 37.414089385948792, 29.322102361320329, 25.227071068052087, 31.205467697781788, 26.152910906075856, 19.631667520747037, 32.29702635705975, 33.327335019456136, 37.29772387602597, 25.936866618111193, 27.367216483677542, 23.632204569609808, 21.096308120285414]
+    Y09_hourly_qt = [41.641760669048146, 42.342235952066034, 42.775465828944533, 52.787501986694821, 47.973749233330409, 49.522126531418785, 33.503306840500692, 42.274819497636983, 45.191994984491522, 45.915898340620288, 40.185395185217821, 42.008305725079921, 36.705277631358513, 33.449317076056928, 34.92462150184469, 27.073668411073189, 26.716538437738496, 38.82035826434916, 37.923223821160285, 40.354963036913325, 29.652411745091413, 33.545230534875238, 25.797125672219924, 25.760345526162997]
+    from supports._setting import TIME_SLOTS
     
-    theta = np.linspace(-4 * np.pi, 4 * np.pi, 100)
-    z = np.linspace(-2, 2, 100)
-    r = z ** 2 + 1
-    x = r * np.sin(theta)
-    y = r * np.cos(theta)
-    
-    l = [[zip(x, y, z), 'test']]
-    line_3D((6, 6), '', '', '', l)
-    
-#     , _figsize, _title, _xlabel, _ylabel, _data
-    
+    diff = [Y09_hourly_qt[i] - Y10_hourly_qt[i] for i in xrange(len(Y10_hourly_qt))]
+    x_info = ('Time slot', TIME_SLOTS, 0)
+    y_info1 = ('Minute', [Y09_hourly_qt, Y10_hourly_qt, diff], (-5, 60), ['Y2009', 'Y2010', 'Diff.'], 'upper left')
+    y_info2 = ('', [num_trip], (0, 350000), ['Number of airport trips'], 'upper right') 
+    x_twin_chart((12, 6), '', x_info, y_info1, y_info2, 'time_slot_queue_time')
+
 if __name__ == '__main__':
     test()

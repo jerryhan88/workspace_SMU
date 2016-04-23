@@ -17,12 +17,15 @@ def run():
     Y09_prev_out = pd.read_csv('%s/Y09-individual-prev-out-ap.csv' % (individual_detail_dir))
     Y10_prev_out = pd.read_csv('%s/Y10-individual-prev-out-ap.csv' % (individual_detail_dir))
     #
-    Y09_general = Y09_general[(Y09_general['total-prod'] < PROD_LIMIT)]
-    Y10_general = Y10_general[(Y10_general['total-prod'] < PROD_LIMIT)]
     Y09_prev_in = Y09_prev_in[(Y09_prev_in['ap-prod'] < PROD_LIMIT)]
+    Y09_prev_in = Y09_prev_in[(0 < Y09_prev_in['op-cost'])]
     Y10_prev_in = Y10_prev_in[(Y10_prev_in['ap-prod'] < PROD_LIMIT)]
+    Y10_prev_in = Y10_prev_in[(0 < Y10_prev_in['op-cost'])]
+    #
     Y09_prev_out = Y09_prev_out[(Y09_prev_out['ap-prod'] < PROD_LIMIT)]
+    Y09_prev_out = Y09_prev_out[(0 < Y09_prev_out['op-cost'])]
     Y10_prev_out = Y10_prev_out[(Y10_prev_out['ap-prod'] < PROD_LIMIT)]
+    Y10_prev_out = Y10_prev_out[(0 < Y10_prev_out['op-cost'])]
     # both years
     Y09_general_did, Y10_general_did = set(Y09_general['did']), set(Y10_general['did'])
     general_both_years_full_drivers = Y09_general_did.intersection(Y10_general_did)
@@ -49,17 +52,33 @@ def run():
     Y09_prev_in_gb, Y10_prev_in_gb = Y09_prev_in.groupby(['did']), Y10_prev_in.groupby(['did'])
     Y09_prev_in_driver_ap_prod = Y09_prev_in_gb.mean()['ap-prod'].to_frame('avg_ap_prod').reset_index()
     Y10_prev_in_driver_ap_prod = Y10_prev_in_gb.mean()['ap-prod'].to_frame('avg_ap_prod').reset_index()
+    Y09_prev_in_driver_eco_pro = Y09_prev_in_gb.mean()['ap-eco-profit'].to_frame('avg_eco_pro').reset_index()
+    Y10_prev_in_driver_eco_pro = Y10_prev_in_gb.mean()['ap-eco-profit'].to_frame('avg_eco_pro').reset_index()
+    #
     Y09_pin_driver_aprod_hour = {did : ap_prod * HOUR / CENT for did, ap_prod in Y09_prev_in_driver_ap_prod.values}
     Y10_pin_driver_aprod_hour = {did : ap_prod * HOUR / CENT for did, ap_prod in Y10_prev_in_driver_ap_prod.values}
+    Y09_pin_driver_epro_month = {did : eco_pro / CENT for did, eco_pro in Y09_prev_in_driver_eco_pro.values}
+    Y10_pin_driver_epro_month = {did : eco_pro / CENT for did, eco_pro in Y10_prev_in_driver_eco_pro.values}
     #
     Y09_prev_out_gb, Y10_prev_out_gb = Y09_prev_out.groupby(['did']), Y10_prev_out.groupby(['did'])
     Y09_prev_out_driver_ap_prod = Y09_prev_out_gb.mean()['ap-prod'].to_frame('avg_ap_prod').reset_index()
     Y10_prev_out_driver_ap_prod = Y10_prev_out_gb.mean()['ap-prod'].to_frame('avg_ap_prod').reset_index()
+    Y09_prev_out_driver_eco_pro = Y09_prev_out_gb.mean()['ap-eco-profit'].to_frame('avg_eco_pro').reset_index()
+    Y10_prev_out_driver_eco_pro = Y10_prev_out_gb.mean()['ap-eco-profit'].to_frame('avg_eco_pro').reset_index()
+    #
     Y09_pout_driver_aprod_hour = {did : ap_prod * HOUR / CENT for did, ap_prod in Y09_prev_out_driver_ap_prod.values}
     Y10_pout_driver_aprod_hour = {did : ap_prod * HOUR / CENT for did, ap_prod in Y10_prev_out_driver_ap_prod.values}
+    Y09_pout_driver_epro_month = {did : eco_pro / CENT for did, eco_pro in Y09_prev_out_driver_eco_pro.values}
+    Y10_pout_driver_epro_month = {did : eco_pro / CENT for did, eco_pro in Y10_prev_out_driver_eco_pro.values}
     
-    save_pickle_file('%s/productivities.pkl' % (individual_detail_dir),
-                     [subset_drivers, Y09_driver_genprod_hour, Y10_driver_genprod_hour, Y09_pin_driver_aprod_hour, Y10_pin_driver_aprod_hour, Y09_pout_driver_aprod_hour, Y10_pout_driver_aprod_hour])
+    save_pickle_file('%s/productivities_ext.pkl' % (individual_detail_dir),
+                     [subset_drivers,
+                      Y09_driver_genprod_hour, Y10_driver_genprod_hour,
+                      Y09_pin_driver_aprod_hour, Y10_pin_driver_aprod_hour,
+                      Y09_pout_driver_aprod_hour, Y10_pout_driver_aprod_hour,
+                      Y09_pin_driver_epro_month, Y10_pin_driver_epro_month,
+                      Y09_pout_driver_epro_month, Y10_pout_driver_epro_month
+                      ])
 
 if __name__ == '__main__':
     run()
