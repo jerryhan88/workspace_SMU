@@ -15,18 +15,18 @@ trip_prefix = 'whole-trip-'
 full_time_drivers, _, _, _, _, _, _, _, _, _, _ = load_picle_file('%s/productivities_ext.pkl' % (individual_detail_dir))
 driver_full_or_not = [False] * (max(full_time_drivers) + 1)
 for did in full_time_drivers:
-    driver_full_or_not[did] = True
+    driver_full_or_not[int(did)] = True
 #
 check_progress = 10000000
 def run():
     remove_creat_dir(for_full_driver_dir)
-    init_multiprocessor()
+#     init_multiprocessor()
     count_num_jobs = 0
     for fn in get_all_files(trips_dir, trip_prefix, '.csv'):
-#         process_file(fn)
-        put_task(process_file, [fn])
-        count_num_jobs += 1
-    end_multiprocessor(count_num_jobs)
+        process_file(fn)
+#         put_task(process_file, [fn])
+#         count_num_jobs += 1
+#     end_multiprocessor(count_num_jobs)
 
 def process_file(fn):
     _, _, yymm = fn[:-len('.csv')].split('-')
@@ -36,18 +36,20 @@ def process_file(fn):
         reader = csv.reader(r_csvfile)
         headers = reader.next()
         id_did = headers.index('did')
-        count = 0
         with open('%s/whole-trip-%s.csv' % (for_full_driver_dir, yymm), 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile)
             writer.writerow(headers)
-        for row in reader:
-            did = row[id_did]
-            if did <= len(driver_full_or_not) and driver_full_or_not[did]:
-                writer.writerow(row)
-            count +=1
-            if count % check_progress == 0:
-                print '%s-----%d' % (yymm, count) 
-                logging_msg('%s-----%d' % (yymm, count))
+            count = 0
+            for row in reader:
+                did = int(row[id_did])
+                if did > len(driver_full_or_not):
+                    continue
+                if driver_full_or_not[did]:
+                    writer.writerow(row)
+                count +=1
+                if count % check_progress == 0:
+                    print '%s-----%d' % (yymm, count) 
+                    logging_msg('%s-----%d' % (yymm, count))
     print 'end the file; %s' % yymm 
     logging_msg('end the file; %s' % yymm)
 
