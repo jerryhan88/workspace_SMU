@@ -48,6 +48,7 @@ trips_dir = prefix + '/trips'
 for_learning_dir = prefix + '/for_learning'
 for_full_driver_dir = prefix + '/full_drivers_trips_q_comparision'
 aiport_trips_dir = trips_dir + '/airport_trips'
+nightsafari_trips_dir = trips_dir + '/nightsafari_trips'
 hourly_summary = trips_dir + '/hourly_summary'
 #
 op_costs_dir = prefix + '/op_costs'
