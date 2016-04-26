@@ -27,8 +27,6 @@ def run():
         
 def process_file(fn):
     _, _, yymm = fn[:-len('.csv')].split('-')
-    if os.path.exists('%s/airport-trip-%s.csv' % (aiport_trips_dir, yymm)):
-        return None
     print 'handle the file; %s' % yymm 
     logging_msg('handle the file; %s' % yymm)
     #
