@@ -33,7 +33,7 @@ def process_file(fn):
     ap_pkl_files = get_all_files(logs_dir, 'ap-crossing-time-', '.pkl')
     ap_pkl_file_path = None
     for pkl_fn in ap_pkl_files:
-        _, _, pkl_yymm = pkl_fn[:-len('.pkl')].split('-')
+        _, _, _, pkl_yymm = pkl_fn[:-len('.pkl')].split('-')
         if pkl_yymm == yymm:
             ap_pkl_file_path = '%s/%s' % (logs_dir, pkl_fn)
             break
@@ -44,7 +44,7 @@ def process_file(fn):
     ns_pkl_files = get_all_files(logs_dir, 'ns-crossing-time-', '.pkl')
     ns_pkl_file_path = None
     for pkl_fn in ns_pkl_files:
-        _, _, pkl_yymm = pkl_fn[:-len('.pkl')].split('-')
+        _, _, _, pkl_yymm = pkl_fn[:-len('.pkl')].split('-')
         if pkl_yymm == yymm:
             ns_pkl_file_path = '%s/%s' % (logs_dir, pkl_fn)
             break
