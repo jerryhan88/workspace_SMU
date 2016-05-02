@@ -56,7 +56,7 @@ nightsafari_trips_dir = trips_dir + '/nightsafari_trips'
 hourly_summary = trips_dir + '/hourly_summary'
 #
 op_costs_dir = prefix + '/op_costs'
-general_dur_fare_dir = op_costs_dir + 'general_dur_fare' 
+general_dur_fare_dir = op_costs_dir + '/general_dur_fare' 
 op_cost_summary = op_costs_dir + '/op-cost-summary.csv'
 out_ap_prod_dir = prefix + '/out_ap_prod'
 out_ns_prod_dir = prefix + '/out_ns_prod'

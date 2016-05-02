@@ -24,8 +24,8 @@ def run():
             yymm = '%02d%02d' % (y, m) 
             if yymm in ['0912', '1010']:
                 continue
-#             process_files('1007')
-            put_task(process_files, [yymm])
+            process_files('1007')
+#             put_task(process_files, [yymm])
             count_num_jobs += 1
     end_multiprocessor(count_num_jobs)
     
@@ -49,7 +49,7 @@ def process_files(yymm):
         headers = reader.next()
         hid = {h : i for i, h in enumerate(headers)}
         for row in reader:
-            dd, hh = row[hid['hh']], row[hid['hh']]
+            dd, hh = eval(row[hid['dd']]), eval(row[hid['hh']])
             hourly_total[(yyyy, mm, dd, hh)][GEN_DUR] += eval(row[hid['pro-dur']]) * 60  # unit change; Minute -> Second 
     # Total fare
     with open('%s/%s%s.csv' % (trips_dir, trip_prefix, yymm), 'rb') as r_csvfile:
