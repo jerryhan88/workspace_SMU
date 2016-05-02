@@ -32,10 +32,14 @@ IN_NS, OUT_NS = 'O', 'X'
 DInAP_PInAP, DInAP_POutAP, DOutAP_PInAP, DOutAP_POutAP = range(4)
 DInNS_PInNS, DInNS_POutNS, DOutNS_PInNS, DOutNS_POutNS = range(4)
 #
-Q_LIMIT_MIN, Q_LIMIT_MAX = 0, 3600
 HOUR, MINUTE = 60 * 60, 60
 CENT = 100
+Q_LIMIT_MIN, Q_LIMIT_MAX = 0, HOUR * 3
+MAX_DURATION = HOUR 
 PROD_LIMIT = 65 / HOUR * CENT
+#
+sh_prefix, trip_prefix, ap_trip_prefix = 'shift-all-', 'whole-trip-', 'airport-trip-'
+general_dur_fare_prefix = 'gdf-'
 #
 shifts_dir = prefix + '/shifts'
 full_shift_dir = shifts_dir + '/full_time_drivers' 
@@ -52,7 +56,11 @@ nightsafari_trips_dir = trips_dir + '/nightsafari_trips'
 hourly_summary = trips_dir + '/hourly_summary'
 #
 op_costs_dir = prefix + '/op_costs'
-op_cost_summary = op_costs_dir + '/op-cost-summary.csv' 
+general_dur_fare_dir = op_costs_dir + 'general_dur_fare' 
+op_cost_summary = op_costs_dir + '/op-cost-summary.csv'
+out_ap_prod_dir = prefix + '/out_ap_prod'
+out_ns_prod_dir = prefix + '/out_ns_prod'
+ 
 #
 individual_dir = prefix + '/individual-summary'
 individual_detail_dir = prefix + '/individual-detail-summary'
