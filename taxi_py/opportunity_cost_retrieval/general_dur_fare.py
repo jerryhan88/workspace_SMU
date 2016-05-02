@@ -18,6 +18,7 @@ GEN_DUR, GEN_FARE = range(2)
 #
 def run():
     remove_creat_dir(general_dur_fare_dir)
+#     process_files('0901')
     init_multiprocessor()
     count_num_jobs = 0
     for y in xrange(9, 11):
@@ -25,7 +26,6 @@ def run():
             yymm = '%02d%02d' % (y, m) 
             if yymm in ['0912', '1010']:
                 continue
-#             process_files('0901')
             put_task(process_files, [yymm])
             count_num_jobs += 1
     end_multiprocessor(count_num_jobs)
@@ -46,6 +46,7 @@ def process_files(yymm):
     #
     st_label, et_label, dur_label, fare_label = 'start-time', 'end-time', 'duration', 'fare'
     # Productive duration
+    yyyy, mm = 2000 + int(yymm[:2]), int(yymm[2:])
     with open('%s/%s%s.csv' % (shifts_dir, sh_prefix, yymm), 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
