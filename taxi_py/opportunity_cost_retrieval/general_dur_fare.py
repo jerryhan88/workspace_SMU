@@ -25,8 +25,8 @@ def run():
             yymm = '%02d%02d' % (y, m) 
             if yymm in ['0912', '1010']:
                 continue
-            process_files('1007')
-#             put_task(process_files, [yymm])
+#             process_files('0901')
+            put_task(process_files, [yymm])
             count_num_jobs += 1
     end_multiprocessor(count_num_jobs)
     
@@ -35,7 +35,7 @@ def process_files(yymm):
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
     begin_timestamp = datetime.datetime(2009, 1, 1, 0) 
-    last_timestamp = datetime.datetime(2011, 1, 1, 0)
+    last_timestamp = datetime.datetime(2011, 2, 1, 0)
     hourly_total, time_period_order = {}, []
     while begin_timestamp < last_timestamp:
         yyyy, mm, dd, hh = begin_timestamp.year, begin_timestamp.month, begin_timestamp.day, begin_timestamp.hour
