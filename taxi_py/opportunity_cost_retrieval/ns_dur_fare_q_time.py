@@ -15,7 +15,7 @@ from supports.multiprocess import init_multiprocessor, put_task, end_multiproces
 #
 import csv, datetime, time
 #
-NS_QUEUE, NS_DUR, NS_FARE = range(5)
+NS_QUEUE, NS_DUR, NS_FARE = range(3)
 #
 def run():
     remove_creat_dir(out_ap_prod_dir)
