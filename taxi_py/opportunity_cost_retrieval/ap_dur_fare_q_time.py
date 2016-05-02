@@ -116,7 +116,8 @@ def process_files(yymm):
                     hourly_total[(tg_dt.year, tg_dt.month,
                               tg_dt.day, tg_dt.hour)][AP_QUEUE] += HOUR
                     tg_dt += datetime.timedelta(hours=1)
-            if (old_time - time.time()) % TIME_ALARM == 0:
+            if (time.time() - old_time) > TIME_ALARM == 0:
+                old_time = time.time()
                 print 'handling; %s' % yymm
                 logging_msg('handling; %s' % yymm)
     with open('%s/%s%s.csv' % (ap_dur_fare_q_time_dir, ap_dur_fare_q_time_prefix, yymm), 'wt') as w_csvfile:

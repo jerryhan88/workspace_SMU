@@ -25,8 +25,8 @@ def run():
             yymm = '%02d%02d' % (y, m) 
             if yymm in ['0912', '1010']:
                 continue
-#             process_files('1007')
-            put_task(process_files, [yymm])
+            process_files('1007')
+#             put_task(process_files, [yymm])
             count_num_jobs += 1
     end_multiprocessor(count_num_jobs)
     
@@ -53,7 +53,8 @@ def process_files(yymm):
         for row in reader:
             dd, hh = eval(row[hid['dd']]), eval(row[hid['hh']])
             hourly_total[(yyyy, mm, dd, hh)][GEN_DUR] += eval(row[hid['pro-dur']]) * 60  # unit change; Minute -> Second
-            if (old_time - time.time()) % TIME_ALARM == 0:
+            if (time.time() - old_time) > TIME_ALARM == 0:
+                old_time = time.time()
                 print 'handling; %s' % yymm
                 logging_msg('handling; %s' % yymm)
     # Total fare
@@ -89,7 +90,8 @@ def process_files(yymm):
                     hourly_total[(tg_dt.year, tg_dt.month,
                               tg_dt.day, tg_dt.hour)][GEN_FARE] += fare * prop
                     tg_dt += datetime.timedelta(hours=1)
-            if (old_time - time.time()) % TIME_ALARM == 0:
+            if (time.time() - old_time) > TIME_ALARM == 0:
+                old_time = time.time()
                 print 'handling; %s' % yymm
                 logging_msg('handling; %s' % yymm)
     with open('%s/%s%s.csv' % (general_dur_fare_dir, general_dur_fare_prefix, yymm), 'wt') as w_csvfile:
