@@ -9,7 +9,6 @@ from supports._setting import TIME_ALARM
 from supports._setting import ap_trip_prefix
 from supports._setting import aiport_trips_dir
 from supports._setting import ap_dur_fare_q_time_dir, ap_dur_fare_q_time_prefix 
-from supports._setting import out_ap_prod_dir
 from supports.logger import logging_msg
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
 #
@@ -18,7 +17,7 @@ import csv, datetime, time
 AP_QUEUE, AP_DUR, AP_FARE = range(3)
 #
 def run():
-    remove_creat_dir(out_ap_prod_dir)
+    remove_creat_dir(ap_dur_fare_q_time_dir)
     init_multiprocessor()
     count_num_jobs = 0
     for y in xrange(9, 11):
