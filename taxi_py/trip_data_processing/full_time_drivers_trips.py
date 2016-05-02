@@ -13,7 +13,6 @@ from supports.multiprocess import init_multiprocessor, put_task, end_multiproces
 #
 import csv
 #
-trip_prefix = 'whole-trip-'
 full_time_drivers, _, _, _, _, _, _, _, _, _, _ = load_picle_file('%s/productivities_ext.pkl' % (individual_detail_dir))
 driver_full_or_not = [False] * (max(full_time_drivers) + 1)
 for did in full_time_drivers:

@@ -57,8 +57,8 @@ def process_file(fn):
             record_crossing_time(path_to_csv_file, vehicle_ap_crossing_time_from_out_to_in, vehicle_last_log_ap_or_not,
                                  vehicle_ns_crossing_time_from_out_to_in, vehicle_last_log_ns_or_not)
     #
-    save_pickle_file('%s/ap_crossing-time-%s.pkl' % (logs_dir, yymm), vehicle_ap_crossing_time_from_out_to_in)
-    save_pickle_file('%s/ns_crossing-time-%s.pkl' % (logs_dir, yymm), vehicle_ns_crossing_time_from_out_to_in)
+    save_pickle_file('%s/ap-crossing-time-%s.pkl' % (logs_dir, yymm), vehicle_ap_crossing_time_from_out_to_in)
+    save_pickle_file('%s/ns-crossing-time-%s.pkl' % (logs_dir, yymm), vehicle_ns_crossing_time_from_out_to_in)
     print 'end the file; %s' % yymm
     logging_msg('end the file; %s' % yymm)
     

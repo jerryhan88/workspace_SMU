@@ -58,10 +58,6 @@ def process_file(fn):
         reader = csv.reader(r_csvfile)
         headers = reader.next()
         header_id = {h : i for i, h in enumerate(headers)}
-#         id_tid, id_vid, id_did = headers.index('tid'), headers.index('vid'), headers.index('did')
-#         id_st, id_et, id_duration = headers.index('start-time'), headers.index('end-time'), headers.index('duration')
-#         id_ap_tm, id_ns_tm = headers.index('ap-trip-mode'), headers.index('ns-trip-mode')
-#         id_fare, id_prev_tet = headers.index('fare'), headers.index('prev-trip-end-time')
         for row in reader:
             tid, did = row[header_id['tid']], row[header_id['did']]
             et, duration = row[header_id['end-time']], row[header_id['duration']]
@@ -126,7 +122,7 @@ def init_csv_files(yymm):
             new_headers = ['tid', 'vid', 'did',
                            'start-time', 'end-time', 'duration',
                            'fare', 'prev-trip-end-time',
-                           'ns-trip-mode', 'ns-queue-time', 'ns-queue-time']
+                           'ns-trip-mode', 'ns-join-queue-time', 'ns-queue-time']
             writer.writerow(new_headers)
          
 if __name__ == '__main__':

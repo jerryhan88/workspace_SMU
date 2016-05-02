@@ -6,8 +6,13 @@ sys.path.append(os.getcwd() + '/..')
 from supports._setting import individual_detail_dir
 from supports._setting import HOUR, CENT, PROD_LIMIT
 from supports.handling_pkl import save_pickle_file
+from supports.handling_pkl import load_picle_file
+from supports.etc_functions import get_all_files
+from supports._setting import for_full_driver_dir
 #
 import pandas as pd
+import numpy as np
+import csv
 #
 def run():
     Y09_general = pd.read_csv('%s/Y09-individual-general.csv' % (individual_detail_dir))
@@ -80,5 +85,59 @@ def run():
                       Y09_pout_driver_epro_month, Y10_pout_driver_epro_month
                       ])
 
+def test():
+    def difference(data0, data1):
+        diff = {}
+        for k, v in data0.iteritems():
+            diff[k] = data1[k] - v
+        return diff
+    def ordering(dids_values):
+        order_v_did = []
+        for did, v in dids_values.iteritems():
+            order_v_did.append([v, did])
+        order_v_did.sort()
+        order_v_did.reverse()
+        return order_v_did
+    def find_extreme_range(order_v_did):
+        # more than mean's 50 percent
+        values = [v for v, _ in order_v_did]
+        mu, std = np.mean(values), np.std(values)
+        i = 0
+        while order_v_did[i][0] > mu + std * 2.0:
+            i += 1
+        return (0, i / len(order_v_did))
+    both_years_full_drivers, \
+    Y09_driver_genprod_hour, Y10_driver_genprod_hour, \
+    Y09_pin_driver_aprod_hour, Y10_pin_driver_aprod_hour, \
+    Y09_pout_driver_aprod_hour, Y10_pout_driver_aprod_hour, \
+    Y09_pin_driver_epro_month, Y10_pin_driver_epro_month, \
+    Y09_pout_driver_epro_month, Y10_pout_driver_epro_month = load_picle_file('%s/productivities_ext.pkl' % (individual_detail_dir))
+    #
+    diff_general_prod = difference(Y09_driver_genprod_hour, Y10_driver_genprod_hour)
+    diff_pin_prod = difference(Y09_pin_driver_aprod_hour, Y10_pin_driver_aprod_hour)
+    diff_pout_prod = difference(Y09_pout_driver_aprod_hour, Y10_pout_driver_aprod_hour)
+    diff_pin_eco = difference(Y09_pin_driver_epro_month, Y10_pin_driver_epro_month)
+    diff_pout_eco = difference(Y09_pout_driver_epro_month, Y10_pout_driver_epro_month)
+    
+    order_v_did = ordering(diff_pin_eco)
+    print len(diff_pin_eco)
+    r1, r2 = find_extreme_range(order_v_did)
+    extreme_drivers = [int(did) for _, did in order_v_did[int(r1 * len(order_v_did)):int(r2 * len(order_v_did))]]
+    for fn in get_all_files(for_full_driver_dir, 'full-drivers-trips-', '.csv'):
+        _, _, _, yymm = fn[:-len('.csv')].split('-')
+        with open('%s/%s' % (for_full_driver_dir, fn), 'rb') as r_csvfile:
+            reader = csv.reader(r_csvfile)
+            headers = reader.next()
+            id_did = headers.index('did')
+            with open('%s/diff-pin-eco-extreme-drivers-trip-%s.csv' % (for_full_driver_dir, yymm), 'wt') as w_csvfile:
+                writer = csv.writer(w_csvfile)
+                writer.writerow(headers)
+                for row in reader:
+                    did = int(row[id_did])
+                    if did not in extreme_drivers:
+                        continue
+                    writer.writerow(row)
+
 if __name__ == '__main__':
-    run()
+    test()
+#     run()

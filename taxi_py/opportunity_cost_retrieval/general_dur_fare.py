@@ -4,6 +4,7 @@ import os, sys
 sys.path.append(os.getcwd() + '/..')
 #
 from supports.etc_functions import remove_creat_dir
+from supports._setting import TIME_ALARM
 from supports._setting import HOUR
 from supports._setting import sh_prefix, trip_prefix
 from supports._setting import shifts_dir, trips_dir 
@@ -30,6 +31,7 @@ def run():
     end_multiprocessor(count_num_jobs)
     
 def process_files(yymm):
+    old_time = time.time()
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
     begin_timestamp = datetime.datetime(2009, 1, 1, 0) 
@@ -50,7 +52,10 @@ def process_files(yymm):
         hid = {h : i for i, h in enumerate(headers)}
         for row in reader:
             dd, hh = eval(row[hid['dd']]), eval(row[hid['hh']])
-            hourly_total[(yyyy, mm, dd, hh)][GEN_DUR] += eval(row[hid['pro-dur']]) * 60  # unit change; Minute -> Second 
+            hourly_total[(yyyy, mm, dd, hh)][GEN_DUR] += eval(row[hid['pro-dur']]) * 60  # unit change; Minute -> Second
+            if (old_time - time.time()) % TIME_ALARM == 0:
+                print 'handling; %s' % yymm
+                logging_msg('handling; %s' % yymm)
     # Total fare
     with open('%s/%s%s.csv' % (trips_dir, trip_prefix, yymm), 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
@@ -66,7 +71,6 @@ def process_files(yymm):
                 hourly_total[(st_dt.year, st_dt.month,
                               st_dt.day, st_dt.hour)][GEN_FARE] += fare
             else:
-                assert dur > HOUR
                 next_ts_dt = datetime.datetime(st_dt.year, st_dt.month, st_dt.day, st_dt.hour) + datetime.timedelta(hours=1)
                 tg_year, tg_month, tg_day, tg_hour = \
                         next_ts_dt.year, next_ts_dt.month, next_ts_dt.day, next_ts_dt.hour
@@ -85,6 +89,9 @@ def process_files(yymm):
                     hourly_total[(tg_dt.year, tg_dt.month,
                               tg_dt.day, tg_dt.hour)][GEN_FARE] += fare * prop
                     tg_dt += datetime.timedelta(hours=1)
+            if (old_time - time.time()) % TIME_ALARM == 0:
+                print 'handling; %s' % yymm
+                logging_msg('handling; %s' % yymm)
     with open('%s/%s%s.csv' % (general_dur_fare_dir, general_dur_fare_prefix, yymm), 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile)
         header = ['yy', 'mm', 'dd', 'hh', 'gen-duration', 'gen-fare']
