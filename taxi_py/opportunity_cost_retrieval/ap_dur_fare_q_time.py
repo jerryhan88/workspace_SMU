@@ -35,7 +35,7 @@ def process_files(yymm):
     print 'handle the file; %s' % yymm
     logging_msg('handle the file; %s' % yymm)
     begin_timestamp = datetime.datetime(2009, 1, 1, 0) 
-    last_timestamp = datetime.datetime(2011, 1, 1, 0)
+    last_timestamp = datetime.datetime(2011, 2, 1, 0)
     hourly_total, time_period_order = {}, []
     while begin_timestamp < last_timestamp:
         yyyy, mm, dd, hh = begin_timestamp.year, begin_timestamp.month, begin_timestamp.day, begin_timestamp.hour
