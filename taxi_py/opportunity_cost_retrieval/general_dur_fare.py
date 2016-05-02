@@ -57,8 +57,8 @@ def process_files(yymm):
         headers = reader.next()
         hid = {h : i for i, h in enumerate(headers)}
         for row in reader:
-            st_ts, et_ts = eval(row[st_label]), eval(row[et_label])
-            dur, fare = eval(row[dur_label]), eval(row[fare_label])
+            st_ts, et_ts = eval(row[hid[st_label]]), eval(row[hid[et_label]])
+            dur, fare = eval(row[hid[dur_label]]), eval(row[hid[fare_label]])
             #
             st_dt, et_dt = datetime.datetime.fromtimestamp(st_ts), datetime.datetime.fromtimestamp(et_ts)
             #
