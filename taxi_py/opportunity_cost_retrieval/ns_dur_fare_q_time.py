@@ -111,7 +111,7 @@ def process_files(yymm):
                 while True:
                     if tg_dt.hour == st_dt.hour:
                         hourly_total[(st_dt.year, st_dt.month,
-                              st_dt.day, st_dt.hour)][NS_QUEUE] += st_dt - tg_ts
+                              st_dt.day, st_dt.hour)][NS_QUEUE] += st_ts - tg_ts
                         break
                     hourly_total[(tg_dt.year, tg_dt.month,
                               tg_dt.day, tg_dt.hour)][NS_QUEUE] += HOUR
