@@ -14,7 +14,7 @@ from supports.multiprocess import init_multiprocessor, put_task, end_multiproces
 #
 import csv, datetime, time
 #
-NS_QUEUE, NS_DUR, NS_FARE = range(3)
+NS_DUR, NS_FARE, NS_QUEUE = range(3)
 #
 def run():
     remove_creat_dir(ns_dur_fare_q_time_dir)
@@ -40,7 +40,7 @@ def process_files(yymm):
     while begin_timestamp < last_timestamp:
         yyyy, mm, dd, hh = begin_timestamp.year, begin_timestamp.month, begin_timestamp.day, begin_timestamp.hour
         k = (yyyy, mm, dd, hh)
-        hourly_total[k] = [0 for _ in range(len([NS_QUEUE, NS_DUR, NS_FARE]))]
+        hourly_total[k] = [0 for _ in range(len([NS_DUR, NS_FARE, NS_QUEUE]))]
         time_period_order.append(k)
         begin_timestamp += datetime.timedelta(hours=1)
     #
