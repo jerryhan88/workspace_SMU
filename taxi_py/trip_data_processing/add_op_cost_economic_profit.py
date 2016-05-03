@@ -7,7 +7,7 @@ import csv, datetime, time
 from traceback import format_exc
 #
 from supports.etc_functions import get_all_files
-from supports._setting import aiport_trips_dir, op_cost_summary
+from supports._setting import airport_trips_dir, op_cost_summary
 from supports._setting import Q_LIMIT_MIN, Q_LIMIT_MAX
 from supports.logger import logging_msg
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
@@ -23,7 +23,7 @@ with open(op_cost_summary) as r_csvfile:
         op_costs[(yyyy, mm, dd, hh)] = eval(row[id_op_cost]) 
 #
 def run():
-    csv_files = get_all_files(aiport_trips_dir, 'airport-trip-', '.csv')
+    csv_files = get_all_files(airport_trips_dir, 'airport-trip-', '.csv')
     init_multiprocessor()
     count_num_jobs = 0
     for fn in csv_files:
@@ -39,7 +39,7 @@ def process_file(fn):
     _, _, yymm = fn[:-len('.csv')].split('-')
     print 'handle the file; %s' % yymm 
     logging_msg('handle the file; %s' % yymm)
-    with open('%s/%s' % (aiport_trips_dir, fn), 'rb') as r_csvfile:
+    with open('%s/%s' % (airport_trips_dir, fn), 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
         
@@ -49,7 +49,7 @@ def process_file(fn):
         id_tm, id_pt_et = headers.index('trip-mode'), headers.index('prev-trip-end-time')
         id_jqt, id_qt = headers.index('join-queue-time'), headers.index('queue-time')
         
-        with open('%s/ap-trip-op-ep-%s.csv' % (aiport_trips_dir, yymm), 'wt') as w_csvfile:
+        with open('%s/ap-trip-op-ep-%s.csv' % (airport_trips_dir, yymm), 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile)
             new_headers = ['tid', 'vid', 'did', 'start-time', 'end-time', 'duration', 'fare', 'trip-mode', 'prev-trip-end-time', 'join-queue-time', 'queue-time',
                            'op-cost', 'economic', 'yy', 'mm', 'dd', 'hh']

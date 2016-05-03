@@ -3,7 +3,7 @@ from __future__ import division
 import os, sys  
 sys.path.append(os.getcwd() + '/..')
 #
-from supports._setting import full_shift_dir, trips_dir, aiport_trips_dir, individual_detail_dir
+from supports._setting import full_shift_dir, trips_dir, airport_trips_dir, individual_detail_dir
 from supports._setting import DInAP_PInAP, DOutAP_PInAP
 from supports.etc_functions import remove_creat_dir
 from supports.handling_pkl import load_picle_file
@@ -47,7 +47,7 @@ def process_files(yymm):
     full_dids = sorted([eval(x) for x in load_picle_file('%s/%s%s.pkl' % (full_shift_dir, monthly_full_did_prefix, yymm))])
     s_df = pd.read_csv('%s/%s%s.csv' % (full_shift_dir, sh_full_prefix, yymm))
     trip_df = pd.read_csv('%s/%s%s.csv' % (trips_dir, trip_prefix, yymm))
-    ap_trip_df = pd.read_csv('%s/%s%s.csv' % (aiport_trips_dir, ap_trip_op_ep_prefix, yymm))
+    ap_trip_df = pd.read_csv('%s/%s%s.csv' % (airport_trips_dir, ap_trip_op_ep_prefix, yymm))
     #
     yy, mm = int(yymm[:2]), int(yymm[2:])
     for did in full_dids:

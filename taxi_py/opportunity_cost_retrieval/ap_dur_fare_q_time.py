@@ -7,7 +7,7 @@ from supports.etc_functions import remove_creat_dir
 from supports._setting import Q_LIMIT_MIN, HOUR
 from supports._setting import TIME_ALARM
 from supports._setting import ap_trip_prefix
-from supports._setting import aiport_trips_dir
+from supports._setting import airport_trips_dir
 from supports._setting import ap_dur_fare_q_time_dir, ap_dur_fare_q_time_prefix 
 from supports.logger import logging_msg
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
@@ -47,7 +47,7 @@ def process_files(yymm):
     st_label, et_label, dur_label, fare_label = 'start-time', 'end-time', 'duration', 'fare'
     ap_qt_label = 'ap-queue-time'
     # Airport fare, duration and queue time
-    with open('%s/%s%s.csv' % (aiport_trips_dir, ap_trip_prefix, yymm), 'rb') as r_csvfile:
+    with open('%s/%s%s.csv' % (airport_trips_dir, ap_trip_prefix, yymm), 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
         hid = {h : i for i, h in enumerate(headers)}
