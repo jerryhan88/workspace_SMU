@@ -42,6 +42,7 @@ sh_prefix, trip_prefix, ap_trip_prefix, ns_trip_prefix = 'shift-all-', 'whole-tr
 general_dur_fare_prefix, ap_dur_fare_q_time_prefix, ns_dur_fare_q_time_prefix = 'gdf-', 'adfqt-', 'ndfqt-'
 #
 shifts_dir = prefix + '/shifts'
+shift_pro_dur_dir = shifts_dir + '/shift_pro_dur'
 full_shift_dir = shifts_dir + '/full_time_drivers' 
 #
 logs_dir = prefix + '/logs'

@@ -15,10 +15,11 @@ AP_DUR, AP_FARE, AP_QUEUE, \
 NS_DUR, NS_FARE, NS_QUEUE = range(8)
 
 def run():
-    cur_timestamp = datetime.datetime(2009, 1, 1, 0) 
+    cur_timestamp = datetime.datetime(2008, 12, 31, 23) 
     last_timestamp = datetime.datetime(2011, 1, 1, 0)
     hp_summary, time_period_order = {}, []
     while cur_timestamp < last_timestamp:
+        cur_timestamp += datetime.timedelta(hours=1)
         yyyy, mm, dd, hh = cur_timestamp.year, cur_timestamp.month, cur_timestamp.day, cur_timestamp.hour
         if yyyy == 2009 and mm == 12: continue
         if yyyy == 2010 and mm == 10: continue
@@ -28,7 +29,7 @@ def run():
                                                 NS_DUR, NS_FARE, NS_QUEUE]))]
         time_period_order.append(k)
         #
-        cur_timestamp += datetime.timedelta(hours=1)
+        
     yy_l, mm_l, dd_l, hh_l = 'yy', 'mm', 'dd', 'hh'
     # General
     for fn in get_all_files(general_dur_fare_dir, general_dur_fare_prefix, '.csv'):
@@ -40,6 +41,7 @@ def run():
             for row in reader:
                 yy, mm, dd, hh = row[hid[yy_l]], row[hid[mm_l]], row[hid[dd_l]], row[hid[hh_l]]
                 k = (yy, mm, dd, hh)
+                if not hp_summary.has_key(k): continue
                 hp_summary[k][GEN_DUR] += eval(row[hid['gen-duration']])
                 hp_summary[k][GEN_FARE] += eval(row[hid['gen-fare']])
     # Aiport
@@ -52,6 +54,7 @@ def run():
             for row in reader:
                 yy, mm, dd, hh = row[hid[yy_l]], row[hid[mm_l]], row[hid[dd_l]], row[hid[hh_l]]
                 k = (yy, mm, dd, hh)
+                if not hp_summary.has_key(k): continue
                 hp_summary[k][AP_DUR] += eval(row[hid['ap-duration']])
                 hp_summary[k][AP_FARE] += eval(row[hid['ap-fare']])
                 hp_summary[k][AP_QUEUE] += eval(row[hid['ap-queue-time']])
@@ -65,6 +68,7 @@ def run():
             for row in reader:
                 yy, mm, dd, hh = row[hid[yy_l]], row[hid[mm_l]], row[hid[dd_l]], row[hid[hh_l]]
                 k = (yy, mm, dd, hh)
+                if not hp_summary.has_key(k): continue
                 hp_summary[k][NS_DUR] += eval(row[hid['ns-duration']])
                 hp_summary[k][NS_FARE] += eval(row[hid['ns-fare']])
                 hp_summary[k][NS_QUEUE] += eval(row[hid['ns-queue-time']])
@@ -81,13 +85,22 @@ def run():
                     'ns-productivity', 'ns-out-productivity']
         writer.writerow(header)
         for k in time_period_order:
+            print k
             gen_dur, gen_fare, \
             ap_dur, ap_fare, ap_queue, \
             ns_dur, ns_fare, ns_queue = hp_summary[k]
             #
             gen_prod = gen_fare / gen_dur
-            ap_prod, ap_out_prod = ap_fare / (ap_dur + ap_queue), (gen_fare - ap_fare) / (gen_dur - (ap_dur + ap_queue))
-            ns_prod, ns_out_prod = ns_fare / (ns_dur + ns_queue), (gen_fare - ns_fare) / (gen_dur - (ns_dur + ns_queue))
+            try:
+                ap_prod = ap_fare / (ap_dur + ap_queue)
+            except ZeroDivisionError:
+                ap_prod = 0
+            ap_out_prod = (gen_fare - ap_fare) / (gen_dur - (ap_dur + ap_queue))
+            try:
+                ns_prod = ns_fare / (ns_dur + ns_queue)
+            except ZeroDivisionError:
+                ns_prod = 0
+            ns_out_prod = (gen_fare - ns_fare) / (gen_dur - (ns_dur + ns_queue))
             #
             writer.writerow([yy, mm, dd, hh,
                             gen_dur, gen_fare,
