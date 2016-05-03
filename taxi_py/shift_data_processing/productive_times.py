@@ -15,10 +15,8 @@ def run():
     remove_creat_dir(shift_pro_dur_dir)
     init_multiprocessor()
     count_num_jobs = 0
-    for fn in get_all_files(shifts_dir, 'shift_hour-state-', '.csv'):
+    for fn in get_all_files(shifts_dir, 'shift-hour-state-', '.csv'):
         _, _, _, yymm = fn[:-len('.csv')].split('-')
-        if yymm.startswith('11') or yymm.startswith('12'):
-            continue
         put_task(process_file, [fn])
         count_num_jobs += 1
     end_multiprocessor(count_num_jobs)
