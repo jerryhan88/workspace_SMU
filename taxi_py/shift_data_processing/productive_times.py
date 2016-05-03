@@ -16,7 +16,6 @@ def run():
     init_multiprocessor()
     count_num_jobs = 0
     for fn in get_all_files(shifts_dir, 'shift-hour-state-', '.csv'):
-        _, _, _, yymm = fn[:-len('.csv')].split('-')
         put_task(process_file, [fn])
         count_num_jobs += 1
     end_multiprocessor(count_num_jobs)

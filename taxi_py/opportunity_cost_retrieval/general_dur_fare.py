@@ -6,8 +6,8 @@ sys.path.append(os.getcwd() + '/..')
 from supports.etc_functions import remove_creat_dir
 from supports._setting import TIME_ALARM
 from supports._setting import HOUR
-from supports._setting import sh_prefix, trip_prefix
-from supports._setting import shifts_dir, trips_dir 
+from supports._setting import shift_pro_dur_prefix, trip_prefix
+from supports._setting import shift_pro_dur_dir, trips_dir 
 from supports._setting import general_dur_fare_dir, general_dur_fare_prefix
 from supports.logger import logging_msg
 from supports.multiprocess import init_multiprocessor, put_task, end_multiprocessor
@@ -47,7 +47,7 @@ def process_files(yymm):
     st_label, et_label, dur_label, fare_label = 'start-time', 'end-time', 'duration', 'fare'
     # Productive duration
     yyyy, mm = 2000 + int(yymm[:2]), int(yymm[2:])
-    with open('%s/%s%s.csv' % (shifts_dir, sh_prefix, yymm), 'rb') as r_csvfile:
+    with open('%s/%s%s.csv' % (shift_pro_dur_dir, shift_pro_dur_prefix, yymm), 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         headers = reader.next()
         hid = {h : i for i, h in enumerate(headers)}

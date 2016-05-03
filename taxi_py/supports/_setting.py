@@ -39,6 +39,7 @@ MAX_DURATION = HOUR
 PROD_LIMIT = 65 / HOUR * CENT
 #
 sh_prefix, trip_prefix, ap_trip_prefix, ns_trip_prefix = 'shift-all-', 'whole-trip-', 'airport-trip-', 'nightsafari-trip-'
+shift_pro_dur_prefix = 'shift-pro-dur-'
 general_dur_fare_prefix, ap_dur_fare_q_time_prefix, ns_dur_fare_q_time_prefix = 'gdf-', 'adfqt-', 'ndfqt-'
 #
 shifts_dir = prefix + '/shifts'
