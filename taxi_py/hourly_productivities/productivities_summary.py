@@ -85,12 +85,15 @@ def run():
                     'ns-productivity', 'ns-out-productivity']
         writer.writerow(header)
         for k in time_period_order:
-            print k
             gen_dur, gen_fare, \
             ap_dur, ap_fare, ap_queue, \
             ns_dur, ns_fare, ns_queue = hp_summary[k]
+            yy, mm, dd, hh = k
             #
-            gen_prod = gen_fare / gen_dur
+            try:
+                gen_prod = gen_fare / gen_dur
+            except ZeroDivisionError:
+                gen_prod = 0
             try:
                 ap_prod = ap_fare / (ap_dur + ap_queue)
             except ZeroDivisionError:
