@@ -4,13 +4,16 @@ import os, sys
 sys.path.append(os.getcwd()+'/..')
 #
 from supports._setting import trips_dir
-from supports._setting import monthly_fare_summary
+from supports._setting import summary_dir, monthly_fare_summary
+from supports.etc_functions import check_dir_create
 from supports._setting import CENT
 from supports.handling_pkl import save_pickle_file
 #
 import pandas as pd
 #
 def run():
+    check_dir_create(summary_dir)
+    #
     Y09_driver_total_monthly_fare, Y10_driver_total_monthly_fare= [], []
     for y in xrange(9, 11):
         for m in xrange(1, 13):

@@ -65,13 +65,17 @@ ap_dur_fare_q_time_dir = hourly_productivities_dir + '/ap_dur_fare_q_time'
 ns_dur_fare_q_time_dir = hourly_productivities_dir + '/ns_dur_fare_q_time'
 productivities_summary = hourly_productivities_dir + '/productivities-summary.csv'
 #
-summary_dir = prefix + '/summary'
-monthly_fare_summary = summary_dir + '/monthly-summary.pkl' 
-individual_dir = prefix + '/individual-summary'
-individual_detail_dir = prefix + '/individual-detail-summary'
-#
 # For Q-learning
+#
 DAY_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 TIME_SLOTS = range(24)
 #
 TIME_ALARM = MINUTE * 5
+#
+# Summary
+#
+summary_dir = prefix + '/summary'
+monthly_fare_summary = summary_dir + '/monthly-summary.pkl'
+driver_monthly_fare_ap_trips = summary_dir + '/driver-monthly-fare-ap-trips.pkl'
+individual_dir = prefix + '/individual-summary'
+individual_detail_dir = prefix + '/individual-detail-summary'

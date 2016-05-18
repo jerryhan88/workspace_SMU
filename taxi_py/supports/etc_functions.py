@@ -2,6 +2,10 @@ from __future__ import division
 import os, shutil
 import datetime
 #
+def check_dir_create(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    
 def remove_creat_dir(path):
     if os.path.exists(path):
         shutil.rmtree(path)
