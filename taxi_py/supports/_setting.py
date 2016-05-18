@@ -63,7 +63,10 @@ hourly_productivities_dir = prefix + '/hourly_productivities'
 general_dur_fare_dir = hourly_productivities_dir + '/general_dur_fare'
 ap_dur_fare_q_time_dir = hourly_productivities_dir + '/ap_dur_fare_q_time'
 ns_dur_fare_q_time_dir = hourly_productivities_dir + '/ns_dur_fare_q_time'
-productivities_summary = hourly_productivities_dir + '/productivities-summary.csv'
+#
+# Labeling for zero duration
+#
+GENERAL, AIRPORT, NIGHTSAFARI = 'G', 'A', 'N'
 #
 # For Q-learning
 #
@@ -75,6 +78,10 @@ TIME_ALARM = MINUTE * 5
 # Summary
 #
 summary_dir = prefix + '/summary'
+hourly_productivities = summary_dir + '/hourly-productivities.csv'
+zero_duration_time_slots = summary_dir + '/zero-duration-time-slots.pkl'
+
+
 monthly_fare_summary = summary_dir + '/monthly-summary.pkl'
 driver_monthly_fare_ap_trips = summary_dir + '/driver-monthly-fare-ap-trips.pkl'
 individual_dir = prefix + '/individual-summary'
