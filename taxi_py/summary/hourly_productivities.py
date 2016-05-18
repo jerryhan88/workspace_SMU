@@ -119,6 +119,7 @@ def run():
                             gen_prod,
                             ap_prod, ap_out_prod,
                             ns_prod, ns_out_prod])
+    #
     save_pickle_file(zero_duration_time_slots, zero_dur)    
     
 if __name__ == '__main__':
