@@ -3,13 +3,13 @@ from __future__ import division
 import os, sys
 sys.path.append(os.getcwd()+'/..')
 #
-import pandas as pd
-
 from supports._setting import trips_dir
 from supports._setting import monthly_fare_summary
 from supports._setting import CENT
 from supports.handling_pkl import save_pickle_file
-
+#
+import pandas as pd
+#
 def run():
     Y09_driver_total_monthly_fare, Y10_driver_total_monthly_fare= [], []
     for y in xrange(9, 11):
