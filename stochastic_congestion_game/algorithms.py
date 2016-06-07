@@ -4,6 +4,8 @@ from random import random
 
 P, S, A, PHI, R, H, d0 = None, None, None, None, None, None, None
 
+GAMMA = 0.99
+
 def FP_SAP(_P, _S, _A, _PHI, _R, _H, _d0):
     #
     # Initialize algorithm inputs
@@ -19,12 +21,15 @@ def FP_SAP(_P, _S, _A, _PHI, _R, _H, _d0):
     while True:
         d = GET_DIST(pi0)
         _x = SOLVE_MDP(d)
-        x = update_x(i, _x)
+        x = update_x(i, x, _x)
         pi1 = update_pi(x)
         i += 1
         if pi0 == pi1:
+            print 'Break?'
             break
         else:
+            print '...ing'
+            print i
             pi0 = pi1
     return pi0
 
@@ -37,8 +42,7 @@ def update_pi(x):
                 pi1[t, s, a] = x[t, s, a] / sum_a
     return pi1
 
-def update_x(i, _x):
-    x = {}
+def update_x(i, x, _x):
     for t in xrange(H):
         for s in S:
             for a in A:
@@ -85,31 +89,24 @@ def SOLVE_MDP(d):
         for s in S:
             for a in A:
                 x[t, s, a] = m.addVar(name='x_%d_(%d,%d)' % (t, s, a))
-    _gamma = m.addVar(vtype=GRB.CONTINUOUS, name="gamma")
-     
+    m.update()
     # Constraints
     for t in xrange(H):
         for s1 in S:
             m.addConstr(quicksum(x[t, s1, a] for a in A)
-                         - _gamma * quicksum(x[t, s0, a] * PHI(t, d, s0, a, s1) for a in A for s0 in S)   
-                        == _delta(t, s1))
+             - GAMMA * quicksum(x[t, s0, a] * PHI(t, d[t], s0, a, s1) for a in A for s0 in S) == _delta(t, s1))
     for t in xrange(H):
         for s in S:
             for a in A:
                 m.addConstr(x[t, s, a] >= 0, 'x_%d_(%d,%d)__Constr' % (t, s, a))
-    m.addConstr(_gamma >= 0, "gamma_lower_bound")
-    m.addConstr(_gamma < 1, "gamma_upper_bound")
     
-    print 'no problem'
-     
     # Objective
     obj = LinExpr()
-    for t in H:
+    for t in xrange(H):
         for s in S:
             for a in A:
-                obj += R[t, s, a] * x[t, s, a] 
+                obj += R(t, s, a, d[t]) * x[t, s, a] 
     m.setObjective(obj, GRB.MAXIMIZE);
-    m.update()
     #
     m.optimize()
     #
@@ -119,6 +116,9 @@ def SOLVE_MDP(d):
             for s in S:
                 for a in A:
                     _x[t, s, a] = x[t, s, a].x
+    else:
+        print 'Errors while optimization'
+        assert False
     return _x
             
 if __name__ == '__main__':

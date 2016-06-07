@@ -4,21 +4,22 @@ from random import randrange, seed
 #
 seed(1)
 #
+FLOW_LB, FLOW_UB = 1, None 
+REWARD_LB, REWARD_UB = 1, 100
+
 def generate_problem(num_agents, num_zones, time_horizon):
+    global FLOW_UB
+    FLOW_UB = int(num_agents * 1.5)
     #
-    # ASSUMETION
-    #  Ignore a case when i == j
-    #
-    fl_t = random_generation(time_horizon, num_zones)
-    Re_t = random_generation(time_horizon, num_zones)
-    Co_t = random_generation(time_horizon, num_zones)
+    fl = flow_generation(num_agents, num_zones, time_horizon)
+    Re, Co = reward_cost_generation(time_horizon, num_zones)
     d0 = [0] * num_zones
     for _ in xrange(num_agents):
         d0[randrange(num_zones)] += 1
     #
-    return fl_t, Re_t, Co_t, d0  
+    return fl, Re, Co, d0  
 
-def random_generation(time_horizon, num_zones):
+def flow_generation(num_agents, num_zones, time_horizon):
     #
     # t_ij: the first index represents time
     #        the second represents row
@@ -28,10 +29,22 @@ def random_generation(time_horizon, num_zones):
     for t in xrange(time_horizon):
         for i in xrange(num_zones):
             for j in xrange(num_zones):
-                if i == j: continue
-                t_ij[t][i][j] = randrange(1, 10)
+                t_ij[t][i][j] = randrange(FLOW_LB, FLOW_UB)
     return t_ij
 
+def reward_cost_generation(time_horizon, num_zones):
+    Re = [[[0] * num_zones for _ in xrange(num_zones)] for _ in xrange(time_horizon)]
+    Co = [[[0] * num_zones for _ in xrange(num_zones)] for _ in xrange(time_horizon)]
+    for t in xrange(time_horizon):
+        for i in xrange(num_zones):
+            for j in xrange(num_zones):
+                reward = randrange(REWARD_LB, REWARD_UB)
+                while reward == REWARD_LB:
+                    reward = randrange(REWARD_LB, REWARD_UB)
+                cost = randrange(reward)
+                Re[t][i][j], Co[t][i][j] = reward, cost
+    return Re, Co
+    
 if __name__ == '__main__':
     num_agents, num_zones = 10, 3
     time_horizon = 5 
