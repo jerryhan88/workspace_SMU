@@ -3,3 +3,6 @@
 /problems.pyc
 /algorithms.pyc
 /ddap.pyc
+/problem_result/
+/gurobi.log
+/file_handling.pyc

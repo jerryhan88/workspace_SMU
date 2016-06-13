@@ -1,11 +1,17 @@
 from __future__ import division
+#
 from gurobipy import *
 from random import random
-
+from prettytable import PrettyTable
+#
+from file_handling import policy_prefix, x_prefix, dist_prefix, lp_prefix
+#
 P, S, A, PHI, R, H, d0 = None, None, None, None, None, None, None
-
+#
 GAMMA = 0.99
-
+#
+RESULT_SAVE = True
+#
 def FP_SAP(_P, _S, _A, _PHI, _R, _H, _d0):
     #
     # Initialize algorithm inputs
@@ -19,10 +25,10 @@ def FP_SAP(_P, _S, _A, _PHI, _R, _H, _d0):
     i = 0
     x = {k:0 for k in pi0.keys()}
     while True:
-        d = GET_DIST(pi0)
-        _x = SOLVE_MDP(d)
+        d = GET_DIST(pi0, i)
+        _x = SOLVE_MDP(d, i)
         x = update_x(i, x, _x)
-        pi1 = update_pi(x)
+        pi1 = update_pi(x, i)
         i += 1
         if pi0 == pi1:
             print 'Break?'
@@ -33,13 +39,26 @@ def FP_SAP(_P, _S, _A, _PHI, _R, _H, _d0):
             pi0 = pi1
     return pi0
 
-def update_pi(x):
+def policy_saving(_pi, postfix):
+    with open('%s%s.txt' % (policy_prefix, postfix), 'w') as f:
+        f.write('Policy -----------------------------------\n')
+        f.write('Column represents state and Row represents action\n')
+        for t in xrange(H):
+            f.write('t = %d,\n' % t)
+            _table = PrettyTable([''] + [a for a in A])
+            for s in S:
+                _table.add_row([s] + [_pi[t, s, a] for a in A])
+            f.write('%s\n' % _table.get_string())
+
+def update_pi(x, i):
     pi1 = {}
     for t in xrange(H):
         for s in S:
             sum_a = sum(x[t, s, a] for a in A)
             for a in A:
                 pi1[t, s, a] = x[t, s, a] / sum_a
+    if RESULT_SAVE:
+        policy_saving(pi1, i)
     return pi1
 
 def update_x(i, x, _x):
@@ -47,6 +66,16 @@ def update_x(i, x, _x):
         for s in S:
             for a in A:
                 x[t, s, a] = (i * x[t, s, a] + _x[t, s, a]) / (i + 1)
+    if RESULT_SAVE:
+        with open('%s%d.txt' % (x_prefix, i), 'w') as f:
+            f.write('x -----------------------------------\n')
+            f.write('Column represents state and Row represents action\n')
+            for t in xrange(H):
+                f.write('t = %d,\n' % t)
+                _table = PrettyTable([''] + [a for a in A])
+                for s in S:
+                    _table.add_row([s] + [x[t, s, a] for a in A])
+                f.write('%s\n' % _table.get_string())
     return x
 
 def GET_RANDOM_POLICY():
@@ -56,9 +85,11 @@ def GET_RANDOM_POLICY():
             rates = [random() for _ in A]
             for a in A:
                 _pi[t, s, a] = rates[a] / sum(rates) 
+    if RESULT_SAVE:
+        policy_saving(_pi, 'init')
     return _pi
 
-def GET_DIST(_pi):
+def GET_DIST(_pi, i):
     _delta0 = [d0[s] / len(P) for s in S]
     #
     d = [d0]
@@ -75,9 +106,15 @@ def GET_DIST(_pi):
         _delta0 = _delta1[:]
         d.append(_d1)
         t += 1
+    if RESULT_SAVE:
+        _table = PrettyTable([s for s in S])
+        _table.add_row([d0[s] for s in S])
+        with open('%s%d.txt' % (dist_prefix, i), 'w') as f:
+            f.write('----------------------------------- Initial distribution\n')
+            f.write('%s\n' % _table.get_string())
     return d
 
-def SOLVE_MDP(d):
+def SOLVE_MDP(d, i):
     def _delta(t, s):
         return d[t][s] / sum(d[t])
     # Create optimization model
@@ -112,6 +149,9 @@ def SOLVE_MDP(d):
     #
     _x = {}
     if m.status == GRB.Status.OPTIMAL:
+        #
+        m.write('%s%d.lp' % (lp_prefix, i))
+        
         for t in xrange(H):
             for s in S:
                 for a in A:
